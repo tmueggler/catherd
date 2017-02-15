@@ -1,4 +1,7 @@
 node_modules/
 *.iml
 .idea/
+**/app/**/*.js
+**/src/**/*.js
+
 
