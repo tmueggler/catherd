@@ -2,8 +2,8 @@
   "name": "catherd-backend",
   "version": "0.0.0",
   "scripts": {
-    "start": "node app/server.js",
-    "compile": "tsc"
+    "compile": "tsc -p src/",
+    "start": "node src/app/server.js"
   },
   "dependencies": {
     "@types/express": "^4.0.35",
