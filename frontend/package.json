@@ -21,9 +21,9 @@
     "zone.js": "^0.7.2"
   },
   "devDependencies": {
-    "@types/socket.io-client": "^1.4.29",
+    "typescript": "^2.1.6",
     "concurrently": "^3.3.0",
     "lite-server": "^2.2.2",
-    "typescript": "^2.1.6"
+    "@types/socket.io-client": "^1.4.29"
   }
 }
