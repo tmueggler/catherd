@@ -8,11 +8,16 @@ export class RegistrationService {
 
     register(uuid: string): Promise<void> {
         return this.db.run(
-            r.db(DBCFG.DB).table(DBCFG.TABLE_GATEWAY).insert({uuid: uuid, state: 'CONNECTED'})
+            r.table(DBCFG.TABLE_GATEWAY).insert(
+                {uuid: uuid, state: 'CONNECTED'},
+                {conflict: 'update'}
+            )
         );
     }
 
     deregister(uuid: string): Promise<void> {
-        return null;
+        return this.db.run(
+            r.table(DBCFG.TABLE_GATEWAY).get(uuid).update({state: 'DISCONNECTED'})
+        );
     }
 }
