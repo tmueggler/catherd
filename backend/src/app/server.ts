@@ -6,6 +6,7 @@ import io = require('socket.io');
 import {DbService} from "./db.service";
 import {RegistrationService} from "./registration.service";
 import * as dbcfg from "./db.config";
+import {GatewayService} from "./gateway.service";
 
 let rest: Express.Express = Express();
 let server: Server = http.createServer(rest);
@@ -16,12 +17,35 @@ const DB: r.ConnectionOptions = {
     port: dbcfg.PORT
 };
 
-let db = new DbService(DB).start();
-let registrations = new RegistrationService(db);
+let $db = new DbService(DB).start();
+let $registrations = new RegistrationService($db);
+let $gateway = new GatewayService($db);
+
+rest.get('/gateway/:uuid', function (req, res, next) {
+    let uuid = req.params['uuid'];
+    if (uuid == 'all') {
+        $gateway.all()
+            .then((result) => {
+                res.send(result);
+            })
+            .catch((err) => {
+                console.log(`Problem retrieving all gateways. Reason ${err}`);
+                res.sendStatus(500);
+            })
+    } else {
+        $gateway.get(uuid)
+            .then((result) => {
+                res.send(result);
+            })
+            .catch((err) => {
+                res.sendStatus(500);
+            })
+    }
+});
 
 rest.post('/register/:uuid', function (req, res, next) {
     let uuid = req.params['uuid'];
-    registrations.register(uuid)
+    $registrations.register(uuid)
         .then((result) => {
             console.log(`Registered ${uuid}`);
             res.sendStatus(200);
@@ -34,7 +58,7 @@ rest.post('/register/:uuid', function (req, res, next) {
 
 rest.post('/deregister/:uuid', function (req, res, next) {
     let uuid = req.params['uuid'];
-    registrations.deregister(uuid)
+    $registrations.deregister(uuid)
         .then((result) => {
             console.log(`Deregistered ${uuid}`);
             res.sendStatus(200);
