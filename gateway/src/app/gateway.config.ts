@@ -21,6 +21,7 @@ export class GatewayConfigProvider {
         }
         if (!cfg.uuid) {
             cfg.uuid = uuid.v4();
+            save = true;
         }
         if (save) {
             fs.writeFileSync(this.path, JSON.stringify(cfg));

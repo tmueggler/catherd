@@ -1,6 +1,7 @@
-import {GatewayConfigProvider} from "./gateway.config";
+import {GatewayConfigProvider, GatewayConfig} from "./gateway.config";
 import {RegistrationService} from "./registration.service";
 import {EventBus} from "./eventbus.service";
+import {RestClient} from "./rest.client";
 
 const CFG_FILE = 'cfg.json';
 
@@ -11,11 +12,21 @@ var $services = {};
     $services['$cfg'] = $cfg_provider.get();
 })($services);
 
-(function ($services) {
-    let $cfg = $services['$cfg'];
-    let $registration = new RegistrationService($cfg.backendUrl);
+(function ($services, $cfg: GatewayConfig) {
+    let $rest = new RestClient($cfg.backendUrl);
+    $services['$rest'] = $rest;
+})(
+    $services,
+    $services['$cfg']
+);
+
+(function ($services, $rest: RestClient) {
+    let $registration = new RegistrationService($rest);
     $services['$registration'] = $registration;
-})($services);
+})(
+    $services,
+    $services['$rest']
+);
 
 (function ($services) {
     let $cfg = $services['$cfg'];
@@ -24,9 +35,26 @@ var $services = {};
     $eventbus.start();
 });//($services);
 
+function error(err: any) {
+    console.warn(`Uncaught error. ${err}`);
+    throw err;
+}
+
 // Main
 (function ($cfg, $registration) {
-    $registration.register($cfg.uuid);
+    console.log(`Staring gateway ${$cfg.uuid}`);
+
+    $registration.register($cfg.uuid)
+        .then((res) => {
+            console.log(`Registering gateway ${$cfg.uuid}`);
+        }, error);
+
+    setTimeout(() => {
+        $registration.deregister($cfg.uuid)
+            .then((res) => {
+                console.log(`Deregistering gateway ${$cfg.uuid}`);
+            }, error);
+    }, 5000);
 })(
     $services['$cfg'],
     $services['$registration']
