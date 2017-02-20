@@ -1,5 +1,6 @@
 import * as r from "rethinkdb";
 import * as t from "timers";
+import * as DBCFG from "./db.config";
 
 export class DbService {
     private _reconnect_ms = 1000;
@@ -43,6 +44,7 @@ export class DbService {
         r.connect(this.opts)
             .then((con) => {
                 console.log(`Connected to db.`);
+                con.use(DBCFG.DB_NAME);
                 this._con = con;
             })
             .catch((err) => {
