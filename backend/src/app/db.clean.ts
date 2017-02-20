@@ -14,7 +14,7 @@ function closeAndExit(con: r.Connection, exit = 0) {
 }
 
 function dropDb(con: r.Connection) {
-    r.dbDrop(dbcfg.DB).run(con)
+    r.dbDrop(dbcfg.DB_NAME).run(con)
         .then(res => {
             closeAndExit(con);
         })
