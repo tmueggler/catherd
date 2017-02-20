@@ -1,0 +1,10 @@
+<table class="table table-hover">
+    <tr>
+        <th>_state_</th>
+        <th>_uuid_</th>
+    </tr>
+    <tr *ngFor="let gateway of gateways">
+        <td>{{gateway.state}}</td>
+        <td>{{gateway.uuid}}</td>
+    </tr>
+</table>

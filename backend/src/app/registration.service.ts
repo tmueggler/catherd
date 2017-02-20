@@ -9,7 +9,7 @@ export class RegistrationService {
     register(uuid: string): Promise<void> {
         return this.db.run(
             r.table(DBCFG.TABLE_GATEWAY).insert(
-                {uuid: uuid, state: 'CONNECTED'},
+                {uuid: uuid, state: 'ONLINE'},
                 {conflict: 'update'}
             )
         );
@@ -17,7 +17,7 @@ export class RegistrationService {
 
     deregister(uuid: string): Promise<void> {
         return this.db.run(
-            r.table(DBCFG.TABLE_GATEWAY).get(uuid).update({state: 'DISCONNECTED'})
+            r.table(DBCFG.TABLE_GATEWAY).get(uuid).update({state: 'OFFLINE'})
         );
     }
 }
