@@ -1,6 +1,7 @@
 import {Injectable} from "@angular/core";
 import {Configuration} from "./app.config";
 import * as SockJS from "sockjs-client";
+import {Observer} from "rxjs";
 
 @Injectable()
 export class EventBus {
@@ -31,6 +32,16 @@ export class EventBus {
 
     private disconnected() {
         console.log(`Message bus disconnected from ${this.url}`);
+    }
+
+    subscribe(observer: Observer<any>) {
+    }
+
+    send(msg: any) {
+        if (!this.sock) {
+            throw new Error(`No connection`);
+        }
+        this.sock.send(JSON.stringify(msg));
     }
 
     stop() {

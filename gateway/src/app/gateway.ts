@@ -49,12 +49,12 @@ function error(err: any) {
             console.log(`Registering gateway ${$cfg.uuid}`);
         }, error);
 
-    setTimeout(() => {
-        $registration.deregister($cfg.uuid)
-            .then((res) => {
-                console.log(`Deregistering gateway ${$cfg.uuid}`);
-            }, error);
-    }, 5000);
+    // setTimeout(() => {
+    //     $registration.deregister($cfg.uuid)
+    //         .then((res) => {
+    //             console.log(`Deregistering gateway ${$cfg.uuid}`);
+    //         }, error);
+    // }, 5000);
 })(
     $services['$cfg'],
     $services['$registration']

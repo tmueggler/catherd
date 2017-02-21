@@ -1,5 +1,5 @@
 import * as r from "rethinkdb";
-import * as DBCFG from "./db.config";
+import * as DBCFG from "../db.config";
 
 function closeAndExit(con: r.Connection, exit = 0) {
     con.close()

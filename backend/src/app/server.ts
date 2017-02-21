@@ -5,8 +5,7 @@ import {DbService} from "./db.service";
 import {RegistrationService} from "./registration.service";
 import * as dbcfg from "./db.config";
 import {GatewayService} from "./gateway.service";
-import * as sockjs from "sockjs";
-import {Server as SockJSServer, Connection as SockJSConnection} from "sockjs";
+import {EventBus} from "./eventbus/eventbus.service";
 import Express = require('express');
 
 const serverPort = 3000;
@@ -24,6 +23,7 @@ let $gateway = new GatewayService($db);
 
 rest.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET, POST, DELETE");
     next();
 });
 
@@ -47,6 +47,17 @@ rest.get('/gateway/:uuid', function (req, res, next) {
                 res.sendStatus(500);
             })
     }
+});
+
+rest.delete('/gateway/:uuid', function (req, res, next) {
+    let uuid = req.params['uuid'];
+    $gateway.delete(uuid)
+        .then((result) => {
+            res.sendStatus(200);
+        })
+        .catch((err) => {
+            res.sendStatus(500);
+        });
 });
 
 rest.post('/register/:uuid', function (req, res, next) {
@@ -75,18 +86,8 @@ rest.post('/deregister/:uuid', function (req, res, next) {
         });
 });
 
-let sockjsServer: SockJSServer = sockjs.createServer();
-sockjsServer.on('connection', (con: SockJSConnection) => {
-    console.log(`Connection from ${con.remoteAddress}:${con.remotePort}`);
-    con.on('data', (message: any) => {
-        console.log(`Message from ${con.remoteAddress}:${con.remotePort} ${message}`);
-    });
-    con.on('close', () => {
-        console.log(`Connection close ${con.remoteAddress}:${con.remotePort}`);
-    });
-});
-sockjsServer.installHandlers(server, {prefix: '/eventbus'});
-
+let eventbus = new EventBus();
+eventbus.start(server);
 
 server.listen(serverPort, function () {
     console.info(`Backend listening @${serverPort}`);

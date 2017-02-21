@@ -19,4 +19,10 @@ export class GatewayService {
             r.table(DBCFG.TABLE_GATEWAY).get(uuid)
         );
     }
+
+    delete(uuid: string){
+        return this.db.run(
+          r.table(DBCFG.TABLE_GATEWAY).get(uuid).delete()
+        );
+    }
 }
