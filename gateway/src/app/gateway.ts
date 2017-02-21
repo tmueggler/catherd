@@ -33,7 +33,7 @@ var $services = {};
     let $eventbus = new EventBus($cfg.backendUrl);
     $services['$eventbus'] = $eventbus;
     $eventbus.start();
-});//($services);
+})($services);
 
 function error(err: any) {
     console.warn(`Uncaught error. ${err}`);

@@ -1,42 +1,43 @@
 import {Injectable} from "@angular/core";
 import {Configuration} from "./app.config";
+import * as SockJS from "sockjs-client";
 
 @Injectable()
 export class EventBus {
-    private socket: SocketIOClient.Socket;
+    private readonly url: string;
+    private sock: any;
 
     constructor(private cfg: Configuration.AppCfg) {
+        this.url = cfg.socketIo.url;
     }
 
     start() {
-        if (this.socket != null && this.socket.connected) {
+        if (this.sock) {
             return;
         }
-        this.socket = io(
-            this.cfg.socketIo.url,
-            {transports: ['websocket', 'polling']}
-        );
-        let self = this;
-        this.socket.on('connect', function (this: SocketIOClient.Socket) {
-            console.debug(`Connected to ${this.io.uri}`);
-            self.connected();
-        });
-        this.socket.on('disconnect', function (this: SocketIOClient.Socket) {
-            console.debug(`Disconnected from ${this.io.uri}`);
-            self.disconnected();
-        });
+        this.sock = SockJS(this.url);
+        this.sock.onopen = this.connected.bind(this);
+        this.sock.onmessage = this.message.bind(this);
+        this.sock.onclose = this.disconnected.bind(this);
     }
 
     private connected() {
+        console.log(`Message bus connected to ${this.url}`);
+    }
+
+    private message(msg: any) {
+        console.log(`Message bus message '${msg}'`);
     }
 
     private disconnected() {
+        console.log(`Message bus disconnected from ${this.url}`);
     }
 
     stop() {
-        if (this.socket === null) {
+        if (!this.sock) {
             return;
         }
-        this.socket.close();
+        this.sock.close();
+        this.sock = null;
     }
 }

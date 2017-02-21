@@ -13,7 +13,7 @@ export namespace Configuration {
                 port: 3000
             };
             this.socketIo = {
-                url: `${this.global.protocol}://${this.global.host}:${this.global.port}`
+                url: `${this.global.protocol}://${this.global.host}:${this.global.port}/eventbus`
             }
         }
     }

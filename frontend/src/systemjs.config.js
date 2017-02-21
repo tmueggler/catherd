@@ -12,8 +12,8 @@
             '@angular/router': 'npm:@angular/router/bundles/router.umd.js',
             '@angular/common': 'npm:@angular/common/bundles/common.umd.js',
             '@angular/http': 'npm:@angular/http/bundles/http.umd.js',
-            rxjs: 'npm:rxjs',
-            'socket.io-client': 'npm:socket.io-client/dist/socket.io.js'
+            'rxjs': 'npm:rxjs',
+            'sockjs-client':'npm:sockjs-client/dist/sockjs.js'
         },
         packages: {
             app: {

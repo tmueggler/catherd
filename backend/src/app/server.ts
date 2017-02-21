@@ -1,21 +1,22 @@
 import http = require('http');
 import {Server} from "http";
 import * as r from "rethinkdb";
-import Express = require('express');
-import io = require('socket.io');
 import {DbService} from "./db.service";
 import {RegistrationService} from "./registration.service";
 import * as dbcfg from "./db.config";
 import {GatewayService} from "./gateway.service";
+import * as sockjs from "sockjs";
+import {Server as SockJSServer, Connection as SockJSConnection} from "sockjs";
+import Express = require('express');
 
-let rest: Express.Express = Express();
-let server: Server = http.createServer(rest);
-let socketio: SocketIO.Server = io(server);
-
+const serverPort = 3000;
 const DB: r.ConnectionOptions = {
     host: dbcfg.HOST,
     port: dbcfg.PORT
 };
+
+let rest: Express.Express = Express();
+let server: Server = http.createServer(rest);
 
 let $db = new DbService(DB).start();
 let $registrations = new RegistrationService($db);
@@ -74,19 +75,18 @@ rest.post('/deregister/:uuid', function (req, res, next) {
         });
 });
 
-socketio.on('connection', function (socket: SocketIO.Socket) {
-    console.log(`SocketIO 'connection' ${socket.id}`);
-
-    socket.on('error', function (this: SocketIO.Socket, error: any) {
-        console.log(`Error ${error}`);
+let sockjsServer: SockJSServer = sockjs.createServer();
+sockjsServer.on('connection', (con: SockJSConnection) => {
+    console.log(`Connection from ${con.remoteAddress}:${con.remotePort}`);
+    con.on('data', (message: any) => {
+        console.log(`Message from ${con.remoteAddress}:${con.remotePort} ${message}`);
     });
-
-    socket.on('disconnect', function (this: SocketIO.Socket, reason: any) {
-        console.log(`Disconnect ${this.id} ${reason}`);
+    con.on('close', () => {
+        console.log(`Connection close ${con.remoteAddress}:${con.remotePort}`);
     });
 });
+sockjsServer.installHandlers(server, {prefix: '/eventbus'});
 
-const serverPort = 3000;
 
 server.listen(serverPort, function () {
     console.info(`Backend listening @${serverPort}`);
