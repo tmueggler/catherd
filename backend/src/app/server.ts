@@ -60,32 +60,6 @@ rest.delete('/gateway/:uuid', function (req, res, next) {
         });
 });
 
-rest.post('/register/:uuid', function (req, res, next) {
-    let uuid = req.params['uuid'];
-    $registrations.register(uuid)
-        .then((result) => {
-            console.log(`Registered ${uuid}`);
-            res.sendStatus(200);
-        })
-        .catch((err) => {
-            console.log(`Problem registering ${uuid}. Reason ${err}`);
-            res.sendStatus(500);
-        });
-});
-
-rest.post('/deregister/:uuid', function (req, res, next) {
-    let uuid = req.params['uuid'];
-    $registrations.deregister(uuid)
-        .then((result) => {
-            console.log(`Deregistered ${uuid}`);
-            res.sendStatus(200);
-        })
-        .catch((err) => {
-            console.log(`Problem deregistering ${uuid}. Reason ${err}`);
-            res.sendStatus(500);
-        });
-});
-
 let eventbus = new EventBus();
 eventbus.start(server);
 
