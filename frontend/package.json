@@ -2,7 +2,7 @@
   "name": "catherd-frontend",
   "version": "0.0.0",
   "scripts": {
-    "build": "tsc -p src/",
+    "build": "gulp && tsc -p src/",
     "build:watch": "tsc -p src/ -w",
     "serve": "lite-server",
     "prestart": "npm run build",
@@ -24,9 +24,11 @@
     "zone.js": "^0.7.2"
   },
   "devDependencies": {
-    "@types/sockjs-client": "^1.0.30",
     "@types/bootstrap": "^3.3.32",
+    "@types/gulp": "^3.8.32",
+    "@types/sockjs-client": "^1.0.30",
     "concurrently": "^3.3.0",
+    "gulp": "^3.9.1",
     "lite-server": "^2.2.2",
     "typescript": "^2.1.6"
   }

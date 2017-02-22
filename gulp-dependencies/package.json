@@ -1,0 +1,14 @@
+{
+  "name": "gulp-dependencies",
+  "version": "0.0.0",
+  "dependencies": {
+    "del": "^2.2.2",
+    "gulp": "^3.9.1",
+    "through2": "^2.0.3"
+  },
+  "devDependencies": {
+    "@types/gulp": "^3.8.32",
+    "@types/node": "^7.0.5",
+    "@types/through2": "^2.0.32"
+  }
+}

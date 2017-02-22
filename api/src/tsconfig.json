@@ -1,4 +1,8 @@
 {
   "compilerOptions": {
+    "outDir": "../dist/@catherd/api",
+    "declaration": true,
+    "declarationDir": "../dist/@catherd/api",
+    "sourceMap": true
   }
 }
