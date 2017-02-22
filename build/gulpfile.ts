@@ -1,37 +1,42 @@
-import {task} from "gulp";
-import {log} from "gulp-util";
-import {execSync} from "child_process";
-import {readFileSync, existsSync} from "fs";
-import * as path from "path";
+import {task, src} from "gulp";
+import {runNpmScript} from "./gulp.plugins";
+
+const MOULE_GULP = '../gulp-dependencies';
+const MODULE_API = '../api';
+const MODULE_BACKEND = '../backend';
+const MOUDLE_FRONTEND = '../frontend';
+const MODULE_GATEWAY = '../gateway';
 
 const MODULES = [
-    '../gulp-dependencies',
-    '../api',
-    '../backend',
-    '../frontend',
-    '../gateway'
+    MOULE_GULP,
+    MODULE_API,
+    MODULE_BACKEND,
+    MOUDLE_FRONTEND,
+    MODULE_GATEWAY
 ];
 
+task('build', () => {
+    return src(MODULES)
+        .pipe(runNpmScript('build'));
+});
+
 task('compile', () => {
-    MODULES.forEach(function (moduledir) {
-        let pkg_json = path.join(moduledir, 'package.json');
-        if (!existsSync(pkg_json)) {
-            log(`[INFO] Skipping module ${moduledir} no package.json present`);
-            return;
-        }
-        let pkg = JSON.parse(readFileSync(pkg_json, 'utf-8'));
-        if (!pkg.scripts || !pkg.scripts.compile) {
-            log(`[INFO] Skipping module ${moduledir} no scripts.compile present`);
-            return;
-        }
-        log(`[INFO] Compiling module ${moduledir}`);
-        try {
-            execSync('npm run compile', {cwd: moduledir});
-        } catch (err) {
-            log(`[FAILED] Compiling module ${moduledir}. Reason ${err}`);
-        }
-    });
+    return src(MODULES)
+        .pipe(runNpmScript('compile'));
 });
 
 task('clean', () => {
+    return src(MODULES)
+        .pipe(runNpmScript('clean'));
+});
+
+const START_MODULES = [
+    MODULE_BACKEND,
+    MOUDLE_FRONTEND,
+    MODULE_GATEWAY
+];
+
+task('start', () => {
+    return src(START_MODULES)
+        .pipe(runNpmScript('start'));
 });

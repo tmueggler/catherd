@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "scripts": {
     "compile:build": "tsc",
-    "compile": "npm run compile:build && gulp compile"
+    "compile": "npm run compile:build && gulp compile",
+    "build": "npm run compile:build && gulp build",
+    "clean": "npm run compile:build && gulp clean"
   },
   "devDependencies": {
     "@types/gulp": "^3.8.32",
