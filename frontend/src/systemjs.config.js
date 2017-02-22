@@ -13,7 +13,8 @@
             '@angular/common': 'npm:@angular/common/bundles/common.umd.js',
             '@angular/http': 'npm:@angular/http/bundles/http.umd.js',
             'rxjs': 'npm:rxjs',
-            'sockjs-client':'npm:sockjs-client/dist/sockjs.js'
+            'sockjs-client': 'npm:sockjs-client/dist/sockjs.js',
+            '@catherd/api': 'npm:@catherd/api/bundles/api.umd.js'
         },
         packages: {
             app: {
