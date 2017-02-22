@@ -2,12 +2,15 @@
   "name": "catherd-api",
   "version": "0.0.0",
   "scripts": {
-    "compile": "tsc -p src/"
+    "compile": "tsc",
+    "rollup": "rollup -c",
+    "build": "npm run compile && npm run rollup"
   },
   "devDependencies": {
     "@types/gulp": "^3.8.32",
     "@types/node": "^7.0.5",
     "gulp": "^3.9.1",
+    "rollup": "^0.41.4",
     "typescript": "^2.1.6"
   }
 }
