@@ -1,7 +1,7 @@
 export interface Message {
-    type: MessageType;
-    from: string;
-    to: string;
+    readonly type: MessageType;
+    readonly from: string;
+    readonly to: string;
 }
 
 export type MessageType = number;

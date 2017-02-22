@@ -1,7 +1,7 @@
 import {Server as HttpServer} from "http";
 import {Server, createServer, Connection} from "sockjs";
-import {Message, MessageType} from "../generic.messages";
-import {SignIn, SignOut} from "../registration/registration.messages";
+import {Message, MessageType} from "@catherd/api/generic.messages";
+import {SignIn, SignOut} from "@catherd/api/registration/registration.messages";
 
 export class EventBus {
     private server: Server;

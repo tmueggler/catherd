@@ -1,7 +1,7 @@
 import {MessageType, Message} from "../generic.messages";
 
 export namespace Restart {
-    const TYPE: MessageType = 11;
+    export const TYPE: MessageType = 11;
 }
 
 export interface Restart extends Message {
@@ -9,7 +9,7 @@ export interface Restart extends Message {
 }
 
 export namespace Update {
-    const TYPE: MessageType = 12;
+    export const TYPE: MessageType = 12;
 }
 
 export interface Update extends Message {
@@ -17,7 +17,7 @@ export interface Update extends Message {
 }
 
 export namespace Shutdown {
-    const TYPE: MessageType = 13;
+    export const TYPE: MessageType = 13;
 }
 
 export interface Shutdown {

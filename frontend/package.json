@@ -2,11 +2,11 @@
   "name": "catherd-frontend",
   "version": "0.0.0",
   "scripts": {
-    "build": "gulp && tsc -p src/",
-    "build:watch": "tsc -p src/ -w",
+    "compile": "gulp && tsc -p src/",
+    "compile:watch": "tsc -p src/ -w",
     "serve": "lite-server",
-    "prestart": "npm run build",
-    "start": "concurrently \"npm run build:watch\" \"npm run serve\""
+    "prestart": "npm run compile",
+    "start": "concurrently \"npm run compile:watch\" \"npm run serve\""
   },
   "dependencies": {
     "@angular/common": "^2.4.8",

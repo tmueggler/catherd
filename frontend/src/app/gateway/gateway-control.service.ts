@@ -1,6 +1,7 @@
 import {Injectable} from "@angular/core";
 import {EventBus} from "../eventbus.service";
 import {Gateway} from "./gateway.model";
+import {Restart, Update, Shutdown} from "@catherd/api/control/control.messages";
 
 @Injectable()
 export class GatewayControlService {
@@ -8,26 +9,28 @@ export class GatewayControlService {
     }
 
     restart(trg: Gateway) {
-        this.eventbus.send({
-            type: 11,
+        let msg: Restart = {
+            type: Restart.TYPE,
             from: null,
             to: trg.uuid,
             delay_ms: 0
-        });
+        };
+        this.eventbus.send(msg);
     }
 
     update(trg: Gateway) {
-        this.eventbus.send({
-            type: 12,
+        let msg: Update = {
+            type: Update.TYPE,
             from: null,
             to: trg.uuid,
             version: null
-        });
+        };
+        this.eventbus.send(msg);
     }
 
     shutdown(trg: Gateway) {
         this.eventbus.send({
-            type: 13,
+            type: Shutdown.TYPE,
             from: null,
             to: trg.uuid,
             delay_ms: 0

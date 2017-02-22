@@ -1,4 +1,5 @@
 import * as SockJS from "sockjs-client";
+import {Message} from "@catherd/api/generic.messages";
 
 export class EventBus {
     private sock: any;
@@ -21,12 +22,16 @@ export class EventBus {
         console.log(`Message bus connected to ${this.url}`);
     }
 
-    private message(msg: any) {
-        console.log(`Message bus message '${msg}'`);
+    private message(msg: sockjs.MessageEvent) {
+        console.log(`Message bus message '${msg.data}'`);
     }
 
     private disconnected() {
         console.log(`Message bus disconnected from ${this.url}`);
+    }
+
+    send(msg: Message) {
+        this.sock.send(JSON.stringify(msg));
     }
 
     stop() {
@@ -35,5 +40,12 @@ export class EventBus {
         }
         this.sock.close();
         this.sock = null;
+    }
+}
+
+declare namespace sockjs {
+    interface MessageEvent {
+        type: string;
+        data: string;
     }
 }

@@ -20,20 +20,21 @@ var $services = {};
     $services['$cfg']
 );
 
-(function ($services, $rest: RestClient) {
-    let $registration = new RegistrationService($rest);
-    $services['$registration'] = $registration;
-})(
-    $services,
-    $services['$rest']
-);
-
 (function ($services) {
     let $cfg = $services['$cfg'];
     let $eventbus = new EventBus($cfg.backendUrl);
-    $services['$eventbus'] = $eventbus;
+    $services['$messaging'] = $eventbus;
     $eventbus.start();
 })($services);
+
+(function ($services, $cfg: GatewayConfig, $messaging: EventBus) {
+    let $registration = new RegistrationService($cfg, $messaging);
+    $services['$registration'] = $registration;
+})(
+    $services,
+    $services['$cfg'],
+    $services['$messaging']
+);
 
 function error(err: any) {
     console.warn(`Uncaught error. ${err}`);
