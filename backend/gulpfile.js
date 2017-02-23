@@ -1,7 +1,7 @@
 var gulp = require('gulp');
-var build = require('../build/dist/@catherd/build');
+var build = require('../build/dist');
 
-var dependencies = ['../api/dist'];
+var dependencies = ['../api'];
 var dependencies_dstdir = 'node_modules';
 
 gulp.task('default', function () {

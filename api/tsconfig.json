@@ -2,9 +2,9 @@
   "compilerOptions": {
     "module": "es6",
     "target": "es6",
-    "outDir": "./dist/@catherd/api",
+    "outDir": "./dist",
     "declaration": true,
-    "declarationDir": "./dist/@catherd/api",
+    "declarationDir": "./dist",
     "sourceMap": true
   },
   "include": [

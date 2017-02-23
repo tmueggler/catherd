@@ -1,5 +1,5 @@
 {
-  "name": "catherd-gateway",
+  "name": "@catherd/gateway",
   "version": "0.0.0",
   "scripts": {
     "compile": "gulp && tsc -p src/",

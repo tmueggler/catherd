@@ -2,7 +2,7 @@ import * as path from "path";
 import * as fs from "fs";
 import {execSync} from "child_process";
 
-export function runNpmScript(dir: PathType, script: string): boolean {
+export function runNpmScript(dir: string, script: string): boolean {
     let package_json = readPackageJson(dir);
     if (!package_json) {
         return false;
@@ -17,7 +17,7 @@ export function runNpmScript(dir: PathType, script: string): boolean {
 
 const PACKAGE_JSON = 'package.json';
 
-function readPackageJson(dir: PathType): PackageJson {
+export function readPackageJson(dir: string): PackageJson {
     let package_json = path.join(dir, PACKAGE_JSON);
     if (!fs.existsSync(package_json)) {
         return null;
@@ -25,9 +25,7 @@ function readPackageJson(dir: PathType): PackageJson {
     return JSON.parse(fs.readFileSync(package_json, 'utf-8'));
 }
 
-export type PathType = string;
-
-interface PackageJson {
+export interface PackageJson {
     name: string,
     version: string,
     scripts?: {[key: string]: string};

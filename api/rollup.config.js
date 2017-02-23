@@ -1,7 +1,7 @@
 export default {
-    entry: 'dist/@catherd/api/index.js',
+    entry: 'dist/index.js',
     format: 'umd',
     moduleName: 'catherd.api',
     sourceMap: true,
-    dest: 'dist/@catherd/api/bundles/api.umd.js'
+    dest: 'dist/bundles/api.umd.js'
 };
