@@ -1,5 +1,5 @@
 import * as SockJS from "sockjs-client";
-import {Message} from "@catherd/api/generic.messages";
+import {Message} from "@catherd/api";
 
 export class EventBus {
     private sock: any;
