@@ -1,6 +1,6 @@
 import {GatewayConfigProvider, GatewayConfig} from "./gateway.config";
 import {RegistrationService} from "./registration.service";
-import {EventBus} from "./eventbus.service";
+import {MessageBus} from "./messagebus.service";
 import {RestClient} from "./rest.client";
 
 const CFG_FILE = 'cfg.json';
@@ -22,12 +22,12 @@ var $services = {};
 
 (function ($services) {
     let $cfg = $services['$cfg'];
-    let $eventbus = new EventBus($cfg.backendUrl);
+    let $eventbus = new MessageBus($cfg.backendUrl);
     $services['$messaging'] = $eventbus;
     $eventbus.start();
 })($services);
 
-(function ($services, $cfg: GatewayConfig, $messaging: EventBus) {
+(function ($services, $cfg: GatewayConfig, $messaging: MessageBus) {
     let $registration = new RegistrationService($cfg, $messaging);
     $services['$registration'] = $registration;
 })(

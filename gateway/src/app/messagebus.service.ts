@@ -1,7 +1,7 @@
 import * as SockJS from "sockjs-client";
 import {Message} from "@catherd/api";
 
-export class EventBus {
+export class MessageBus {
     private sock: any;
 
     constructor(private readonly url: string) {
