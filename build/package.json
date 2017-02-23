@@ -3,16 +3,21 @@
   "version": "0.0.0",
   "scripts": {
     "compile:build": "tsc",
-    "compile": "npm run compile:build && gulp compile",
-    "build": "npm run compile:build && gulp build",
-    "clean": "npm run compile:build && gulp clean"
+    "compile:gulpfile": "tsc -p tsconfig-gulpfile.json",
+    "prerun": "npm run compile:build && npm run compile:gulpfile",
+    "compile": "npm run prerun && gulp compile",
+    "build": "npm run prerun && gulp build",
+    "clean": "npm run prerun && gulp clean"
+  },
+  "dependencies": {
+    "del": "^2.2.2",
+    "gulp": "^3.9.1",
+    "gulp-util": "^3.0.8"
   },
   "devDependencies": {
     "@types/gulp": "^3.8.32",
     "@types/gulp-util": "^3.0.30",
     "@types/node": "^7.0.5",
-    "gulp": "^3.9.1",
-    "gulp-util": "^3.0.8",
     "typescript": "^2.1.6"
   }
 }

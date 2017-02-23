@@ -25,7 +25,7 @@ function readPackageJson(dir: PathType): PackageJson {
     return JSON.parse(fs.readFileSync(package_json, 'utf-8'));
 }
 
-type PathType = string;
+export type PathType = string;
 
 interface PackageJson {
     name: string,

@@ -1,6 +1,16 @@
 {
   "compilerOptions": {
+    "target": "es6",
     "module": "commonjs",
-    "target": "es6"
-  }
+    "declaration": true,
+    "sourceMap": true,
+    "outDir": "dist/@catherd/build"
+  },
+  "include": [
+    "src/**/*",
+    "index.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

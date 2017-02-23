@@ -1,5 +1,5 @@
 import {task, src} from "gulp";
-import {runNpmScript} from "./gulp.plugins";
+import {runNpmScript} from "./src/gulp.plugins";
 
 const MOULE_GULP = '../gulp-dependencies';
 const MODULE_API = '../api';
@@ -16,17 +16,17 @@ const MODULES = [
 ];
 
 task('build', () => {
-    return src(MODULES)
+    return src(MODULES, {read: false})
         .pipe(runNpmScript('build'));
 });
 
 task('compile', () => {
-    return src(MODULES)
+    return src(MODULES, {read: false})
         .pipe(runNpmScript('compile'));
 });
 
 task('clean', () => {
-    return src(MODULES)
+    return src(MODULES, {read: false})
         .pipe(runNpmScript('clean'));
 });
 
@@ -37,6 +37,6 @@ const START_MODULES = [
 ];
 
 task('start', () => {
-    return src(START_MODULES)
+    return src(START_MODULES, {read: false})
         .pipe(runNpmScript('start'));
 });
