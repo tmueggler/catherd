@@ -1,7 +1,7 @@
 import {Injectable} from "@angular/core";
 import {EventBus} from "../eventbus.service";
 import {Gateway} from "./gateway.model";
-import {Restart, Update, Shutdown} from "@catherd/api";
+import {Restart, Update, Shutdown} from "@catherd/api/web";
 
 @Injectable()
 export class GatewayControlService {

@@ -14,7 +14,7 @@
             '@angular/http': 'npm:@angular/http/bundles/http.umd.js',
             'rxjs': 'npm:rxjs',
             'sockjs-client': 'npm:sockjs-client/dist/sockjs.js',
-            '@catherd/api': 'npm:@catherd/api/bundles/api.umd.js'
+            '@catherd/api/web': 'npm:@catherd/api/web/api.umd.js'
         },
         packages: {
             app: {
