@@ -1,11 +1,11 @@
 import {Context, DefaultContext} from "./context";
-import {DefaultFactory} from "./factory";
+import {DefaultFactory, Type} from "./factory";
 
 export namespace Inject {
     let factoryfunctions: Function[] = [];
 
     // Decorator
-    export function Bean(type: {new(): any}) {
+    export function Bean<T>(type: Type<T>) {
         return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
             let f = target[propertyKey];
             setReturnType(f, type);
@@ -18,25 +18,25 @@ export namespace Inject {
         factoryfunctions.forEach((f) => {
             let returntype = getReturnType(f);
             if (!returntype) {
-                throw new Error(`Missing inject returntype metadata`);
+                throw new Error(`Missing inject return type metadata`);
             }
             factories.register(returntype, () => {
                 return f();
             });
         });
-        return new DefaultContext((type: {new(): any}, ctx: Context) => {
+        return new DefaultContext((type: Type<any>, ctx: Context) => {
             return factories.create(type, ctx)
         });
     }
 
-    function setReturnType(target: any, type: {new(): any}) {
+    function setReturnType(target: any, type: Type<any>) {
         if (!target.__inject) {
             target.__inject = {};
         }
         return target.__inject.returntype = type;
     }
 
-    function getReturnType(target: any): {new(): any} {
+    function getReturnType(target: any): Type<any> {
         if (!target.__inject) {
             throw Error(`Missing inject metadata`);
         }

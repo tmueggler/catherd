@@ -14,7 +14,7 @@ describe("Using a bean decorator", () => {
     it("the context should return a service instance", () => {
         let ctx = Inject.newContext();
         let instance = ctx.get(Service);
-        expect(instance).not.toBeNull();
+        expect(instance).toBeDefined();
     });
 
     it("the factory method should have been called", () => {
@@ -22,6 +22,7 @@ describe("Using a bean decorator", () => {
         let ctx = Inject.newContext();
         let instance = ctx.get(Service);
         expect(Factories.service).toHaveBeenCalled();
+        expect(instance).toBeDefined();
         expect(instance).not.toBeNull();
     });
 });

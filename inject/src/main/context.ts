@@ -1,7 +1,7 @@
-import {Factory} from "./factory";
+import {Factory, Type} from "./factory";
 
 export interface Context {
-    get<T>(type: {new(): T}): T;
+    get<T>(type: Type<T>): T;
 }
 
 export class DefaultContext implements Context {
@@ -10,10 +10,10 @@ export class DefaultContext implements Context {
     constructor(private readonly factory: Factory) {
     }
 
-    get<T>(type: {new(): T}): T {
+    get<T>(type: Type<T>): T {
         let instance = this.instances[type.name];
         if (!instance) {
-            let instance = this.factory(type, this);
+            instance = this.factory(type, this);
             this.instances[type.name] = instance;
         }
         return instance;
