@@ -8,7 +8,7 @@ export class MessageBus {
         this.url = `${this.url}/eventbus`
     }
 
-    start() {
+    start(): void {
         if (this.sock != null) {
             return;
         }
@@ -18,23 +18,23 @@ export class MessageBus {
         this.sock.onclose = this.disconnected.bind(this);
     }
 
-    private connected() {
+    private connected(): void {
         console.log(`Message bus connected to ${this.url}`);
     }
 
-    private message(msg: sockjs.MessageEvent) {
+    private message(msg: sockjs.MessageEvent): void {
         console.log(`Message bus message '${msg.data}'`);
     }
 
-    private disconnected() {
+    private disconnected(): void {
         console.log(`Message bus disconnected from ${this.url}`);
     }
 
-    send(msg: Message) {
+    send(msg: Message): void {
         this.sock.send(JSON.stringify(msg));
     }
 
-    stop() {
+    stop(): void {
         if (this.sock == null) {
             return;
         }

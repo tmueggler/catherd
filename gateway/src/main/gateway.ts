@@ -5,14 +5,16 @@ import {RestClient} from "./rest.client";
 
 const CFG_FILE = 'cfg.json';
 
-var $services = {};
+type ServiceRegistry = {[type: string]: any};
 
-(function ($services) {
+let $services: ServiceRegistry = {};
+
+(function ($services: ServiceRegistry): void {
     let $cfg_provider = new GatewayConfigProvider(CFG_FILE);
     $services['$cfg'] = $cfg_provider.get();
 })($services);
 
-(function ($services, $cfg: GatewayConfig) {
+(function ($services: ServiceRegistry, $cfg: GatewayConfig): void {
     let $rest = new RestClient($cfg.backendUrl);
     $services['$rest'] = $rest;
 })(
@@ -20,14 +22,14 @@ var $services = {};
     $services['$cfg']
 );
 
-(function ($services) {
+(function ($services: ServiceRegistry): void {
     let $cfg = $services['$cfg'];
     let $eventbus = new MessageBus($cfg.backendUrl);
     $services['$messaging'] = $eventbus;
     $eventbus.start();
 })($services);
 
-(function ($services, $cfg: GatewayConfig, $messaging: MessageBus) {
+(function ($services: ServiceRegistry, $cfg: GatewayConfig, $messaging: MessageBus): void {
     let $registration = new RegistrationService($cfg, $messaging);
     $services['$registration'] = $registration;
 })(
@@ -36,19 +38,16 @@ var $services = {};
     $services['$messaging']
 );
 
-function error(err: any) {
+function error(err: any): void {
     console.warn(`Uncaught error. ${err}`);
     throw err;
 }
 
 // Main
-(function ($cfg, $registration) {
+(function ($cfg: GatewayConfig, $registration: RegistrationService): void {
     console.log(`Staring gateway ${$cfg.uuid}`);
 
-    $registration.register($cfg.uuid)
-        .then((res) => {
-            console.log(`Registering gateway ${$cfg.uuid}`);
-        }, error);
+    $registration.register($cfg.uuid);
 
     // setTimeout(() => {
     //     $registration.deregister($cfg.uuid)

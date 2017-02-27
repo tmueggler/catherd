@@ -2,9 +2,9 @@
   "name": "@catherd/gateway",
   "version": "0.0.0",
   "scripts": {
-    "compile": "gulp && tsc -p src/",
+    "compile": "gulp && tsc -p tsconfig.json",
     "prestart": "npm run compile",
-    "start": "node dist/gateway.js"
+    "start": "node test/node/index.js"
   },
   "dependencies": {
     "q": "^1.4.1",

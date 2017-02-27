@@ -6,7 +6,7 @@ export class RegistrationService {
     constructor(private readonly $cfg: GatewayConfig, private readonly $messaging: MessageBus) {
     }
 
-    register(uuid: string) {
+    register(uuid: string): void {
         let msg: SignIn = {
             type: SignIn.TYPE,
             from: this.$cfg.uuid,
@@ -16,7 +16,7 @@ export class RegistrationService {
         this.$messaging.send(msg);
     }
 
-    deregister(uuid: string) {
+    deregister(uuid: string): void {
         let msg: SignOut = {
             type: SignOut.TYPE,
             from: this.$cfg.uuid,
