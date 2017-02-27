@@ -27,6 +27,7 @@ export function syncDependency(dst_root: string): Transform {
         log(`[INFO] Installing module ${module_name} from ${src_dir} to ${dst_dir}`);
         fs.emptyDirSync(dst_dir);
         fs.copySync(src_dir, dst_dir);
+        done();
     }
 
     return through2.obj(transform);
