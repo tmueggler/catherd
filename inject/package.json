@@ -1,0 +1,25 @@
+{
+  "name": "@catherd/inject",
+  "version": "0.0.0",
+  "scripts": {
+    "jasmine": "jasmine JASMINE_CONFIG_PATH=jasmine.json",
+    "compile:test":"tsc -p tsconfig.test.json",
+    "test": "npm run compile:test && npm run jasmine",
+    "compile:node": "tsc -p tsconfig.json",
+    "compile:es6": "tsc -p tsconfig.es6.json",
+    "rollup": "rollup -c",
+    "build:node": "npm run compile:node",
+    "build:web": "npm run compile:es6 && npm run rollup",
+    "build": "npm run build:node && npm run build:web"
+  },
+  "devDependencies": {
+    "@types/jasmine": "^2.5.43",
+    "@types/node": "^7.0.5",
+    "jasmine": "^2.5.3",
+    "rollup": "^0.41.4",
+    "typescript": "^2.2.1"
+  },
+  "dependencies": {
+    "core-js": "^2.4.1"
+  }
+}
