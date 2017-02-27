@@ -1,6 +1,6 @@
 import {MessageBus} from "./messagebus.service";
 import {GatewayConfig} from "./gateway.config";
-import {SignIn, SignOut} from "@catherd/api";
+import {SignIn, SignOut} from "@catherd/api/node";
 
 export class RegistrationService {
     constructor(private readonly $cfg: GatewayConfig, private readonly $messaging: MessageBus) {

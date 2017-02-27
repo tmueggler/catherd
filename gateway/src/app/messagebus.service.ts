@@ -1,5 +1,5 @@
 import * as SockJS from "sockjs-client";
-import {Message} from "@catherd/api";
+import {Message} from "@catherd/api/node";
 
 export class MessageBus {
     private sock: any;
