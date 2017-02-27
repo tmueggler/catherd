@@ -2,9 +2,12 @@
   "name": "@catherd/api",
   "version": "0.0.0",
   "scripts": {
-    "compile": "tsc",
+    "compile:node": "tsc -p tsconfig.json",
+    "compile:web": "tsc -p tsconfig.es6.json",
     "rollup": "rollup -c",
-    "build": "npm run compile && npm run rollup"
+    "build:node": "npm run compile:node",
+    "build:web": "npm run compile:web && npm run rollup",
+    "build": "npm run build:node && npm run build:web"
   },
   "devDependencies": {
     "@types/gulp": "^3.8.32",

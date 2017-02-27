@@ -1,10 +1,9 @@
 {
   "compilerOptions": {
-    "module": "es6",
     "target": "es6",
-    "outDir": "./dist",
+    "module": "commonjs",
+    "outDir": "dist/node",
     "declaration": true,
-    "declarationDir": "./dist",
     "sourceMap": true
   },
   "include": [
