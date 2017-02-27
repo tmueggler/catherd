@@ -1,11 +1,12 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "test/node"
+    "target": "es6",
+    "module": "commonjs",
+    "outDir": "dist/node"
   },
   "include": [
     "src/main**/*",
-    "src/test/**/*",
     "index.ts"
   ]
 }

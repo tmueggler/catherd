@@ -7,7 +7,7 @@
 
 ## Node
 
-`tsconfig.json` with `"module": "commonjs"` is used to build `dist/node` distributable. 
+`tsconfig.node.json` with `"module": "commonjs"` is used to build `dist/node` distributable. 
 
 ## Web
 
@@ -17,5 +17,5 @@ used by *rollup.js*. *rollup.js* bundles all dependencies in a single file using
 
 ## Test
 
-`tsconfig.test.json` is used to build `src/main` as well as `src/test` into `test/node`. Tests are run with `jasmine`
+`tsconfig.json` is used to build `src/main` as well as `src/test` into `test/node`. Tests are run with `jasmine`
 in node.

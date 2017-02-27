@@ -4,5 +4,9 @@
     "target": "es6",
     "module": "es6",
     "outDir": "dist/es6"
-  }
+  },
+  "include":[
+    "src/main/**/*",
+    "index.ts"
+  ]
 }

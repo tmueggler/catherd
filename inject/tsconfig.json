@@ -8,13 +8,11 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "declaration": true,
-    "outDir": "dist/node"
+    "outDir": "test/node"
   },
   "include": [
     "src/main/**/*",
+    "src/test/**/*",
     "index.ts"
-  ],
-  "exclude": [
-    "node_modules"
   ]
 }

@@ -3,18 +3,19 @@
   "version": "0.0.0",
   "scripts": {
     "jasmine": "jasmine JASMINE_CONFIG_PATH=jasmine.json",
-    "compile:test":"tsc -p tsconfig.test.json",
+    "compile:test": "tsc -p tsconfig.json",
     "test": "npm run compile:test && npm run jasmine",
-    "compile:node": "tsc -p tsconfig.json",
+    "compile:node": "tsc -p tsconfig.node.json",
     "compile:es6": "tsc -p tsconfig.es6.json",
     "rollup": "rollup -c",
     "build:node": "npm run compile:node",
-    "build:web": "npm run compile:es6 && npm run rollup",
+    "build:web": "npm run compile:es6 && npm run rollup && gulp webCopyDeclarations",
     "build": "npm run build:node && npm run build:web"
   },
   "devDependencies": {
     "@types/jasmine": "^2.5.43",
     "@types/node": "^7.0.5",
+    "gulp": "^3.9.1",
     "jasmine": "^2.5.3",
     "rollup": "^0.41.4",
     "typescript": "^2.2.1"
