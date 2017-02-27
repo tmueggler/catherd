@@ -1,4 +1,4 @@
-import {MessageBus} from "./messagebus.service";
+import {MessageBus} from "./messagebus/messagebus.service";
 import {GatewayConfig} from "./gateway.config";
 import {SignIn, SignOut} from "@catherd/api/node";
 
@@ -6,7 +6,7 @@ export class RegistrationService {
     constructor(private readonly $cfg: GatewayConfig, private readonly $messaging: MessageBus) {
     }
 
-    register(uuid: string): void {
+    register(): void {
         let msg: SignIn = {
             type: SignIn.TYPE,
             from: this.$cfg.uuid,
@@ -16,7 +16,7 @@ export class RegistrationService {
         this.$messaging.send(msg);
     }
 
-    deregister(uuid: string): void {
+    deregister(): void {
         let msg: SignOut = {
             type: SignOut.TYPE,
             from: this.$cfg.uuid,

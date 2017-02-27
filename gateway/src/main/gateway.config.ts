@@ -31,7 +31,7 @@ export class GatewayConfigProvider {
     }
 }
 
-export interface GatewayConfig {
+export class GatewayConfig {
     uuid: string;
     backendUrl: string;
 }

@@ -1,1 +1,1 @@
-import './src/main/gateway';
+import "./src/main/main";

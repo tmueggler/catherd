@@ -1,10 +1,12 @@
 import * as SockJS from "sockjs-client";
 import {Message} from "@catherd/api/node";
+import {EventBus} from "../eventbus/eventbus.service";
+import {MessageBusEvent} from "./messagebus.event";
 
 export class MessageBus {
     private sock: any;
 
-    constructor(private readonly url: string) {
+    constructor(private readonly url: string, private readonly events: EventBus) {
         this.url = `${this.url}/eventbus`
     }
 
@@ -20,6 +22,7 @@ export class MessageBus {
 
     private connected(): void {
         console.log(`Message bus connected to ${this.url}`);
+        this.events.send({type: MessageBusEvent.CONNECTED, src_id: null})
     }
 
     private message(msg: sockjs.MessageEvent): void {
@@ -28,6 +31,7 @@ export class MessageBus {
 
     private disconnected(): void {
         console.log(`Message bus disconnected from ${this.url}`);
+        this.events.send({type: MessageBusEvent.DISCONNECTED, src_id: null});
     }
 
     send(msg: Message): void {
