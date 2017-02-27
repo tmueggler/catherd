@@ -1,6 +1,6 @@
 import {Server as HttpServer} from "http";
 import {Server, createServer, Connection} from "sockjs";
-import {Message, MessageType, SignIn, SignOut} from "@catherd/api";
+import {Message, MessageType, SignIn, SignOut} from "@catherd/api/node";
 
 export class EventBus {
     private server: Server;
@@ -63,7 +63,7 @@ class EventBusConnection {
 }
 
 class EventBusConnectionHandler {
-    private connections = {};
+    private connections: {[type: string]: EventBusConnection} = {};
 
     constructor(private readonly handler: MessageHandler<any>) {
     }
@@ -146,7 +146,7 @@ class EventBusConnectionHandler {
 }
 
 class DispatchingMessageHandler implements MessageHandler<any> {
-    private handlers = {};
+    private handlers: {[type: string]: MessageHandler<any>} = {};
 
     register(type: MessageType, handler: MessageHandler<any>) {
         this.handlers[type] = handler;

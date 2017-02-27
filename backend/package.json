@@ -3,10 +3,11 @@
   "version": "0.0.0",
   "scripts": {
     "compile": "gulp && tsc -p src/",
+    "build": "npm run compile",
     "prestart": "npm run compile",
-    "start": "node src/app/server.js",
-    "db:init": "npm run compile && node src/app/db.init.js",
-    "db:clean": "npm run compile && node src/app/db.clean.js"
+    "start": "node dist/server.js",
+    "db:init": "npm run compile && node dist/db.init.js",
+    "db:clean": "npm run compile && node dist/db.clean.js"
   },
   "dependencies": {
     "express": "^4.14.1",
