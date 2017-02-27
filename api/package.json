@@ -6,11 +6,10 @@
     "compile:web": "tsc -p tsconfig.es6.json",
     "rollup": "rollup -c",
     "build:node": "npm run compile:node",
-    "build:web": "npm run compile:web && npm run rollup",
+    "build:web": "npm run compile:web && npm run rollup && gulp webCopyDeclarations",
     "build": "npm run build:node && npm run build:web"
   },
   "devDependencies": {
-    "@types/gulp": "^3.8.32",
     "@types/node": "^7.0.5",
     "gulp": "^3.9.1",
     "rollup": "^0.41.4",
