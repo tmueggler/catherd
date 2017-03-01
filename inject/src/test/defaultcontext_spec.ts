@@ -1,5 +1,5 @@
 import {DefaultContext} from "../main/context";
-import {BeanFactory} from "../main/factory";
+import {BeanFactory, DefaultBeanFactory} from "../main/factory";
 
 const BEAN_NAME = 'bean';
 
@@ -10,9 +10,7 @@ describe("Using a default context", () => {
     let factory: BeanFactory;
 
     beforeEach(() => {
-        factory = {
-            create: null
-        }
+        factory = new DefaultBeanFactory();
     });
 
     it("should call its factory create method to create bean instances", () => {
