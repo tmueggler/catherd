@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import {BeanPostProcessor, BeanName, Context} from "@catherd/inject/node";
+import {BeanPostProcessor, BeanName, Context, ContextLifecycle} from "@catherd/inject/node";
 import {EventBus} from "../eventbus/eventbus.service";
 import {AppEvent} from "./app.event";
 import {AppBeans} from "./app.beans";
@@ -48,8 +48,16 @@ class Run {
         this.target[this.method]();
     }
 
+    runSafe(): void {
+        try {
+            this.run();
+        } catch (e) {
+            console.warn(`Uncaught exception running ${this}. Reason ${e}`);
+        }
+    }
+
     toString() {
-        return `Run ${this.target.name}.${this.method}() in phase ${this.phase}`;
+        return `Run{${this.target}.${this.method}(), phase=${this.phase}}`;
     }
 
     static compareForStart(r1: Run, r2: Run): number {
@@ -75,57 +83,50 @@ class Run {
 }
 
 export class AppLifecycleBeanPostProcessor implements BeanPostProcessor {
-    private initialized: boolean = false;
-    private destroyed: boolean = false;
-    private pendingstart: Run[] = [];
-    private pendingstop: Run[] = [];
+    private isInitialized: boolean = false;
+    private isDestroyed: boolean = false;
+    private pendingStart: Run[] = [];
+    private pendingStop: Run[] = [];
 
     process(name: BeanName, instance: any): any {
-        if (this.destroyed) {
-            return instance;
+        if (this.isDestroyed) {
+            return null;
         }
         let start: StartMetadata = Reflect.getMetadata(LifecycleMetadata.START, instance.constructor.prototype);
         if (start) {
-            if (this.initialized) {
-                this.runSafe(new Run(start.phase, instance, start.run))
+            if (this.isInitialized) {
+                new Run(start.phase, instance, start.run).runSafe();
             } else {
-                this.pendingstart.push(new Run(start.phase, instance, start.run)); // run once initialized
+                this.pendingStart.push(new Run(start.phase, instance, start.run)); // run once initialized
             }
         }
         let stop: StopMetadata = Reflect.getMetadata(LifecycleMetadata.STOP, instance.constructor.prototype);
         if (stop) {
-            this.pendingstop.push(new Run(stop.phase, instance, stop.run));
+            this.pendingStop.push(new Run(stop.phase, instance, stop.run));
         }
     }
 
-    private runSafe(run: Run) {
-        try {
-            run.run();
-        } catch (e) {
-            console.warn(`Uncaught exception running ${run}. Reason ${e}`);
+    @ContextLifecycle.Initialized()
+    contextInitialized(ctx: Context): void {
+        if (!this.pendingStart) {
+            return;
         }
-    }
-
-
-    @Context.Initialized()
-    contextInitialized(ctx: Context) {
-        this.pendingstart.sort(Run.compareForStart);
-        this.pendingstart.forEach((start) => {
-            this.runSafe(start);
-        });
-        this.pendingstart = null;
-        this.initialized = true;
+        this.pendingStart.sort(Run.compareForStart);
+        this.pendingStart.forEach((start) => start.runSafe());
+        this.pendingStart = null;
+        this.isInitialized = true;
         ctx.get<EventBus>(AppBeans.EVENT_BUS).send({type: AppEvent.START, src_id: null});
     }
 
-    @Context.Destroyed()
-    contextDestroyed(ctx: Context) {
-        this.pendingstop.sort(Run.compareForStop);
-        this.pendingstop.forEach((stop) => {
-            this.runSafe(stop);
-        });
-        this.pendingstop = null;
-        this.destroyed = true;
+    @ContextLifecycle.Destroyed()
+    contextDestroyed(ctx: Context): void {
+        if (!this.pendingStop) {
+            return;
+        }
+        this.pendingStop.sort(Run.compareForStop);
+        this.pendingStop.forEach((stop) => stop.runSafe());
+        this.pendingStop = null;
+        this.isDestroyed = true;
         ctx.get<EventBus>(AppBeans.EVENT_BUS).send({type: AppEvent.STOP, src_id: null});
     }
 }

@@ -1,5 +1,5 @@
-import {DefaultBeanFactory} from "../main/factory";
-import {DefaultContext} from "../main/context";
+import {DefaultBeanFactory} from "../main/factory.default";
+import {DefaultContext} from "../main/context.default";
 import createSpy = jasmine.createSpy;
 
 const SERVICE_BEAN_NAME = 'service';
@@ -9,7 +9,6 @@ class ServiceBean {
 
 describe("", () => {
     let ctx: DefaultContext;
-
 
     beforeEach(() => {
         createSpy('ctx');

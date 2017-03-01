@@ -1,4 +1,4 @@
-import {BeanPostProcessor, BeanName, Context} from "@catherd/inject/node";
+import {BeanPostProcessor, BeanName, Context, ContextLifecycle} from "@catherd/inject/node";
 import {PartialObserver} from "rxjs/Observer";
 import {EventBus, Event} from "./eventbus.service";
 import "reflect-metadata";
@@ -19,7 +19,7 @@ export function EventBusObserver() {
 export class EventBusBeanPostProcessor implements BeanPostProcessor {
     private pending: PartialObserver<Event>[] = [];
 
-    process(name: BeanName, instance: any): void {
+    process(name: BeanName, instance: any): any {
         if (Reflect.hasMetadata(EventBusMetadata.OBSERVER, instance.constructor)) {
             if (this.eventbus) { // context has been initialized
                 let sub = this.eventbus.subscribe(instance);
@@ -32,7 +32,7 @@ export class EventBusBeanPostProcessor implements BeanPostProcessor {
 
     private eventbus: EventBus;
 
-    @Context.Initialized()
+    @ContextLifecycle.Initialized()
     contextInitialized(ctx: Context) {
         this.eventbus = ctx.get<EventBus>(AppBeans.EVENT_BUS);
         this.pending.forEach((observer) => {
@@ -42,7 +42,7 @@ export class EventBusBeanPostProcessor implements BeanPostProcessor {
         this.pending = null;
     }
 
-    @Context.Destroyed()
+    @ContextLifecycle.Destroyed()
     contextDestroyed(ctx: Context) {
         // TODO
     }

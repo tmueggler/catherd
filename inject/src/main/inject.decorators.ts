@@ -1,5 +1,7 @@
-import {Context, DefaultContext} from "./context";
-import {DefaultBeanFactory, BeanName, BeanDefinition} from "./factory";
+import {BeanDefinition, BeanName} from "./factory";
+import {Context} from "./context";
+import {DefaultBeanFactory} from "./factory.default";
+import {DefaultContext} from "./context.default";
 
 export namespace Inject {
     let definitions: BeanDefinition<any>[] = [];

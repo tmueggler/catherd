@@ -1,5 +1,6 @@
-import {DefaultContext} from "../main/context";
-import {BeanFactory, DefaultBeanFactory} from "../main/factory";
+import {BeanFactory} from "../main/factory";
+import {DefaultBeanFactory} from "../main/factory.default";
+import {DefaultContext} from "../main/context.default";
 
 const BEAN_NAME = 'bean';
 
