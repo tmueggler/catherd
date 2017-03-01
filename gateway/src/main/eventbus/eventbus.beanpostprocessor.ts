@@ -2,7 +2,7 @@ import {BeanPostProcessor, BeanName, Context} from "@catherd/inject/node";
 import {PartialObserver} from "rxjs/Observer";
 import {EventBus, Event} from "./eventbus.service";
 import "reflect-metadata";
-import {AppBeans} from "../app.beans";
+import {AppBeans} from "../app/app.beans";
 
 namespace EventBusMetadata {
     const NAMESPACE = 'eventbus';

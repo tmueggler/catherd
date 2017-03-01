@@ -1,6 +1,6 @@
 import {Subject, ConnectableObservable, Subscription} from "rxjs";
 import {PartialObserver} from "rxjs/Observer";
-import {Start, Stop} from "../applifecycle.beanpostprocessor";
+import {Start, Stop} from "../app/applifecycle.beanpostprocessor";
 
 export class EventBus {
     private readonly subject: Subject<Event>;

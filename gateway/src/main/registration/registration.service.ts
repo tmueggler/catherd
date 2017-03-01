@@ -1,5 +1,5 @@
-import {MessageBus} from "./messagebus/messagebus.service";
-import {GatewayConfig} from "./gateway.config";
+import {MessageBus} from "../messagebus/messagebus.service";
+import {GatewayConfig} from "../gateway.config";
 import {SignIn, SignOut} from "@catherd/api/node";
 
 export class RegistrationService {

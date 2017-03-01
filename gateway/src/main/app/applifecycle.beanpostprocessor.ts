@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import {BeanPostProcessor, BeanName, Context} from "@catherd/inject/node";
-import {EventBus} from "./eventbus/eventbus.service";
+import {EventBus} from "../eventbus/eventbus.service";
 import {AppEvent} from "./app.event";
 import {AppBeans} from "./app.beans";
 

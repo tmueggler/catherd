@@ -1,5 +1,5 @@
 import {NextObserver} from "rxjs/Observer";
-import {RegistrationService} from "../registration.service";
+import {RegistrationService} from "./registration.service";
 import {Event} from "../eventbus/eventbus.service";
 import {EventBusObserver} from "../eventbus/eventbus.beanpostprocessor";
 import {MessageBusEvent} from "../messagebus/messagebus.event";

@@ -1,13 +1,13 @@
 import {EventBus} from "./eventbus/eventbus.service";
 import {MessageBus} from "./messagebus/messagebus.service";
 import {GatewayConfig, GatewayConfigProvider} from "./gateway.config";
-import {RegistrationService} from "./registration.service";
+import {RegistrationService} from "./registration/registration.service";
 import {RegistrationController} from "./registration/registration.controller";
 import {MessageBusController} from "./messagebus/messagebus.controller";
 import {Context, DefaultBeanFactory, BeanName, DefaultContext} from "@catherd/inject/node";
 import {EventBusBeanPostProcessor} from "./eventbus/eventbus.beanpostprocessor";
-import {AppLifecycleBeanPostProcessor} from "./applifecycle.beanpostprocessor";
-import {AppBeans} from "./app.beans";
+import {AppLifecycleBeanPostProcessor} from "./app/applifecycle.beanpostprocessor";
+import {AppBeans} from "./app/app.beans";
 
 let $$factories = new DefaultBeanFactory();
 
