@@ -6,63 +6,65 @@ import {RegistrationController} from "./registration/registration.controller";
 import {MessageBusController} from "./messagebus/messagebus.controller";
 import {Context, DefaultBeanFactory, BeanName, DefaultContext} from "@catherd/inject/node";
 import {EventBusBeanPostProcessor} from "./eventbus/eventbus.beanpostprocessor";
+import {AppLifecycleBeanPostProcessor} from "./applifecycle.beanpostprocessor";
+import {AppBeans} from "./app.beans";
 
 let $$factories = new DefaultBeanFactory();
 
-const GATEWAYCONFIG_BEAN = GatewayConfig.name;
 $$factories.define({
-    name: GATEWAYCONFIG_BEAN,
+    name: AppBeans.APP_CONFIG,
     create: () => {
         return new GatewayConfigProvider('cfg.json').get();
     }
 });
 
-const EVENTBUS_BEAN = EventBus.name;
 $$factories.define({
-    name: EVENTBUS_BEAN, create: () => {
+    name: AppBeans.EVENT_BUS, create: () => {
         return new EventBus();
     }
 });
 
-const MESSAGEBUS_BEAN = MessageBus.name;
 $$factories.define({
-    name: MESSAGEBUS_BEAN,
+    name: AppBeans.MESSAGE_BUS,
     create: (name: BeanName, ctx: Context) => {
         return new MessageBus(
-            ctx.get<GatewayConfig>(GATEWAYCONFIG_BEAN).backendUrl,
-            ctx.get<EventBus>(EVENTBUS_BEAN)
+            ctx.get<GatewayConfig>(AppBeans.APP_CONFIG).backendUrl,
+            ctx.get<EventBus>(AppBeans.EVENT_BUS)
         );
     }
 });
 
-const MESSAGEBUS_CONTROLLER_BEAN = MessageBusController.name;
 $$factories.define({
-    name: MESSAGEBUS_CONTROLLER_BEAN,
+    name: 'message-bus-controller',
     create: (name: BeanName, ctx: Context) => {
         return new MessageBusController(
-            ctx.get<MessageBus>(MESSAGEBUS_BEAN)
+            ctx.get<MessageBus>(AppBeans.MESSAGE_BUS)
         );
     }
 });
 
-const REGISTRATIONSERVICE_BEAN = RegistrationService.name;
 $$factories.define({
-    name: REGISTRATIONSERVICE_BEAN, create: (name: BeanName, ctx: Context) => {
+    name: AppBeans.REGISTRATION_SERVICE, create: (name: BeanName, ctx: Context) => {
         return new RegistrationService(
-            ctx.get<GatewayConfig>(GATEWAYCONFIG_BEAN),
-            ctx.get<MessageBus>(MESSAGEBUS_BEAN)
+            ctx.get<GatewayConfig>(AppBeans.APP_CONFIG),
+            ctx.get<MessageBus>(AppBeans.MESSAGE_BUS)
         );
     }
 });
 
-const REGISTRATIONSERVICE_CONTROLLER_BEAN = RegistrationController.name;
 $$factories.define({
-    name: REGISTRATIONSERVICE_CONTROLLER_BEAN,
+    name: 'registration-service-controller',
     create: (name: BeanName, ctx: Context) => {
         return new RegistrationController(
-            ctx.get<RegistrationService>(REGISTRATIONSERVICE_BEAN)
+            ctx.get<RegistrationService>(AppBeans.REGISTRATION_SERVICE)
         )
     }
 });
 
-DefaultContext.initialize($$factories, [new EventBusBeanPostProcessor()]);
+DefaultContext.initialize(
+    $$factories,
+    [
+        new EventBusBeanPostProcessor(),
+        new AppLifecycleBeanPostProcessor()
+    ]
+);

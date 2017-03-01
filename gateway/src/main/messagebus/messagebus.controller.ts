@@ -1,13 +1,24 @@
 import {NextObserver} from "rxjs/Observer";
 import {Event} from "../eventbus/eventbus.service";
 import {MessageBus} from "./messagebus.service";
-import {eventbus} from "../eventbus/eventbus.beanpostprocessor";
+import {EventBusObserver} from "../eventbus/eventbus.beanpostprocessor";
+import {AppEvent} from "../app.event";
 
-@eventbus.Observer()
+@EventBusObserver()
 export class MessageBusController implements NextObserver<Event> {
     constructor(private readonly messages: MessageBus) {
     }
 
     next(evt: Event) {
+        switch (evt.type) {
+            case AppEvent.START:
+                this.messages.start();
+                break;
+            case AppEvent.STOP:
+                this.messages.stop();
+                break;
+            default:
+                break;
+        }
     }
 }

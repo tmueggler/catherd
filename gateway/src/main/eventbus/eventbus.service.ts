@@ -1,5 +1,6 @@
 import {Subject, ConnectableObservable, Subscription} from "rxjs";
 import {PartialObserver} from "rxjs/Observer";
+import {Start, Stop} from "../applifecycle.beanpostprocessor";
 
 export class EventBus {
     private readonly subject: Subject<Event>;
@@ -12,6 +13,7 @@ export class EventBus {
 
     private connection: Subscription;
 
+    @Start(0)
     start(): void {
         if (this.connection) {
             return;
@@ -19,6 +21,7 @@ export class EventBus {
         this.connection = this.publisher.connect();
     }
 
+    @Stop(0)
     stop(): void {
         if (!this.connection) {
             return;
