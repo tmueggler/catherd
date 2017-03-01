@@ -1,4 +1,5 @@
 import {Subject, ConnectableObservable, Subscription} from "rxjs";
+import {PartialObserver} from "rxjs/Observer";
 
 export class EventBus {
     private readonly subject: Subject<Event>;
@@ -30,8 +31,8 @@ export class EventBus {
         this.subject.next(evt);
     }
 
-    subscribe(on: OnEvent): Subscription {
-        return this.publisher.subscribe(on);
+    subscribe(observer: PartialObserver<Event>): Subscription {
+        return this.publisher.subscribe(observer);
     }
 }
 
@@ -40,8 +41,4 @@ export type EventType = number;
 export interface Event {
     readonly type: EventType;
     readonly src_id: string;
-}
-
-export interface OnEvent {
-    (evt: Event): void;
 }
