@@ -15,7 +15,7 @@ describe("Using a default context", () => {
 
     it("should call its factory create method to create bean instances", () => {
         spyOn(factory, 'create').and.returnValue(new Bean());
-        let ctx = new DefaultContext(factory);
+        let ctx = DefaultContext.initialize(factory);
         let instance = ctx.get(BEAN_NAME);
         expect(instance).toBeDefined();
         expect(instance).not.toBeNull();

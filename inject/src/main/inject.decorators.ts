@@ -19,6 +19,6 @@ export namespace Inject {
         definitions.forEach((def) => {
             factory.define(def);
         });
-        return new DefaultContext(factory);
+        return DefaultContext.initialize(factory);
     }
 }
