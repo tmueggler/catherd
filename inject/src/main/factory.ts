@@ -1,25 +1,32 @@
 import {Context} from "./context";
 
-export interface Type<T> {
-    name: string;
+export interface BeanDefinition<T> {
+    name: BeanName;
+    create: CreateBean<T>;
 }
 
-export interface Factory {
-    <T>(type: Type<T>, ctx: Context): T;
+export type BeanName = string;
+
+export interface CreateBean<T> {
+    (name: BeanName, ctx: Context): T;
 }
 
-export class DefaultFactory {
-    private factories: {[k: string]: Factory} = {};
+export interface BeanFactory {
+    create<T>(name: BeanName, ctx: Context): T;
+}
 
-    register<T>(type: Type<T>, factory: Factory): void {
-        this.factories[type.name] = factory;
+export class DefaultBeanFactory implements BeanFactory {
+    private definitions: {[name: string]: BeanDefinition<any>} = {};
+
+    define(definition: BeanDefinition<any>) {
+        this.definitions[definition.name] = definition;
     }
 
-    create<T>(type: Type<T>, ctx: Context): T {
-        let factory = this.factories[type.name];
-        if (!factory) {
-            throw new Error(`No factory for type '${type.name}' registered`);
+    create<T>(name: BeanName, ctx: Context): T {
+        let def = this.definitions[name];
+        if (!def) {
+            throw new Error(`No bean definition found for name ${name}`);
         }
-        return factory(type, ctx);
+        return def.create(name, ctx);
     }
 }

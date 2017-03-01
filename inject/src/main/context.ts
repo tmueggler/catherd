@@ -1,20 +1,20 @@
-import {Factory, Type} from "./factory";
+import {BeanName, BeanFactory} from "./factory";
 
 export interface Context {
-    get<T>(type: Type<T>): T;
+    get<T>(name: BeanName): T;
 }
 
 export class DefaultContext implements Context {
-    private readonly instances: {[k: string]: any} = {};
+    private readonly instances: {[name: string]: any} = {};
 
-    constructor(private readonly factory: Factory) {
+    constructor(private readonly factory: BeanFactory) {
     }
 
-    get<T>(type: Type<T>): T {
-        let instance = this.instances[type.name];
+    get<T>(name: BeanName): T {
+        let instance = this.instances[name];
         if (!instance) {
-            instance = this.factory(type, this);
-            this.instances[type.name] = instance;
+            instance = this.factory.create(name, this);
+            this.instances[name] = instance;
         }
         return instance;
     }

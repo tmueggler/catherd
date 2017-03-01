@@ -1,10 +1,24 @@
 import {DefaultContext} from "../main/context";
+import {BeanFactory} from "../main/factory";
 
-describe("", () => {
-    it("", () => {
-        let factory = jasmine.createSpy('factories').and.returnValue({});
+const BEAN_NAME = 'bean';
+
+class Bean {
+}
+
+describe("Using a default context", () => {
+    let factory: BeanFactory;
+
+    beforeEach(() => {
+        factory = {
+            create: null
+        }
+    });
+
+    it("should call its factory create method to create bean instances", () => {
+        spyOn(factory, 'create').and.returnValue(new Bean());
         let ctx = new DefaultContext(factory);
-        let instance = ctx.get({name: 'any'});
+        let instance = ctx.get(BEAN_NAME);
         expect(instance).toBeDefined();
         expect(instance).not.toBeNull();
     });
