@@ -1,5 +1,5 @@
-import {DbService} from "./db.service";
-import * as DBCFG from "./db.config";
+import {DbService} from "../db/db.service";
+import * as DBCFG from "../db/db.config";
 import * as r from "rethinkdb";
 
 export class RegistrationService {
