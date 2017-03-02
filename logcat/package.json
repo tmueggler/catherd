@@ -1,0 +1,20 @@
+{
+  "name": "@catherd/logcat",
+  "version": "0.0.0",
+  "scripts": {
+    "compile:test": "tsc -p tsconfig.json",
+    "jasmine": "jasmine JASMINE_CONFIG_PATH=jasmine.json",
+    "test": "npm run compile:test && npm run jasmine",
+    "compile:node": "tsc -p tsconfig.node.json",
+    "build": "npm run compile:node"
+  },
+  "devDependencies": {
+    "@types/jasmine": "^2.5.43",
+    "@types/winston": "^2.2.0",
+    "jasmine": "^2.5.3",
+    "typescript": "^2.2.1"
+  },
+  "peerDependencies": {
+    "winston": "^2.3.1"
+  }
+}
