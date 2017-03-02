@@ -63,7 +63,7 @@ class EventBusConnection {
 }
 
 class EventBusConnectionHandler {
-    private connections: {[type: string]: EventBusConnection} = {};
+    private connections: Map<string, EventBusConnection> = new Map();
 
     constructor(private readonly handler: MessageHandler<any>) {
     }
@@ -88,7 +88,7 @@ class EventBusConnectionHandler {
 
     private interceptSignIn(src: EventBusConnection, msg: SignIn) {
         let uuid = msg.from;
-        let existing = this.connections[uuid];
+        let existing = this.connections.get(uuid);
         if (existing) {
             if (existing !== src) {
                 throw Error(`Only one connection allowed per uuid`);
@@ -96,13 +96,13 @@ class EventBusConnectionHandler {
             return; // No need to sign in again
         }
         src.uuid = uuid;
-        this.connections[uuid] = src;
+        this.connections.set(uuid, src);
         this.handleMessage(src, msg);
     }
 
     private interceptSignOut(src: EventBusConnection, msg: SignOut) {
         let uuid = msg.from;
-        let existing = this.connections[uuid];
+        let existing = this.connections.get(uuid);
         if (!existing) {
             throw Error(`No connection found for uuid`);
         } else if (existing !== src) {
@@ -111,7 +111,7 @@ class EventBusConnectionHandler {
         try {
             this.handleMessage(src, msg);
         } finally {
-            delete this.connections[uuid];
+            this.connections.delete(uuid);
         }
     }
 
@@ -122,7 +122,7 @@ class EventBusConnectionHandler {
         } else if (!res.to || res.to.length === 0) {
             throw Error(`Response message to: not set`);
         }
-        let dst = this.connections[res.to];
+        let dst = this.connections.get(res.to);
         if (!dst) {
             throw Error(`To destination not found`);
         }
@@ -134,12 +134,14 @@ class EventBusConnectionHandler {
             con.close();
         } catch (err) {
             console.log(`Connection close on error failed. Reason ${err}`);
+        } finally {
+            this.connections.delete(con.uuid);
         }
     }
 
     close(con: EventBusConnection) {
         if (con.uuid) {
-            delete this.connections[con.uuid];
+            this.connections.delete(con.uuid);
             con.uuid = null;
         }
     }
