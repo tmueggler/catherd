@@ -6,6 +6,9 @@ export class MessageBus {
     private server: Server;
     private connectionHandler: MessageBusConnectionHandler;
 
+    constructor(private handler: MessageHandler<any>) {
+    }
+
     start(http: HttpServer) {
         if (this.server) {
             return;
@@ -13,8 +16,7 @@ export class MessageBus {
         let s: Server = createServer();
         s.on('connection', this.newConnection.bind(this));
 
-        let dispatcher = new DispatchingMessageHandler();
-        this.connectionHandler = new MessageBusConnectionHandler(dispatcher);
+        this.connectionHandler = new MessageBusConnectionHandler(this.handler);
 
         s.installHandlers(http, {prefix: '/eventbus'});
         this.server = s;
@@ -147,7 +149,7 @@ class MessageBusConnectionHandler {
     }
 }
 
-class DispatchingMessageHandler implements MessageHandler<any> {
+export class DispatchingMessageHandler implements MessageHandler<any> {
     private handlers: Map<MessageType, MessageHandler<any>> = new Map();
 
     register(type: MessageType, handler: MessageHandler<any>): void {

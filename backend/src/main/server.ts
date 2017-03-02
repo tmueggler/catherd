@@ -5,7 +5,7 @@ import {DbService} from "./db/db.service";
 import {RegistrationService} from "./registration/registration.service";
 import * as dbcfg from "./db/db.config";
 import {GatewayService} from "./gateway/gateway.service";
-import {MessageBus} from "./messagebus/messagebus.service";
+import {MessageBus, DispatchingMessageHandler} from "./messagebus/messagebus.service";
 import Express = require('express');
 
 const serverPort = 3000;
@@ -60,7 +60,7 @@ rest.delete('/gateway/:uuid', function (req, res, next) {
         });
 });
 
-let messagebbus = new MessageBus();
+let messagebbus = new MessageBus(new DispatchingMessageHandler());
 messagebbus.start(server);
 
 server.listen(serverPort, function () {
