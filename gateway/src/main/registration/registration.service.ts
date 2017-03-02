@@ -13,7 +13,11 @@ export class RegistrationService {
             to: null,
             version: null
         };
-        this.$messaging.send(msg);
+        try {
+            this.$messaging.send(msg);
+        } catch (e) {
+            console.warn(`Problem sending SingIn. Reason ${e}`);
+        }
     }
 
     deregister(): void {
@@ -22,6 +26,10 @@ export class RegistrationService {
             from: this.$cfg.uuid,
             to: null
         };
-        this.$messaging.send(msg);
+        try {
+            this.$messaging.send(msg);
+        } catch (e) {
+            console.warn(`Problem sending SignOut. Reason ${e}`);
+        }
     }
 }
