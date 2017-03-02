@@ -148,17 +148,17 @@ class MessageBusConnectionHandler {
 }
 
 class DispatchingMessageHandler implements MessageHandler<any> {
-    private handlers: {[type: string]: MessageHandler<any>} = {};
+    private handlers: Map<MessageType, MessageHandler<any>> = new Map();
 
-    register(type: MessageType, handler: MessageHandler<any>) {
-        this.handlers[type] = handler;
+    register(type: MessageType, handler: MessageHandler<any>): void {
+        this.handlers.set(type, handler);
     }
 
     handle(msg: Message): Message {
         if (!msg) {
             return null;
         }
-        let h: MessageHandler<Message> = this.handlers[msg.type];
+        let h: MessageHandler<Message> = this.handlers.get(msg.type);
         if (!h) {
             return msg; // Message will be forwarded
         }
