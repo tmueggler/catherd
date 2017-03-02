@@ -4,7 +4,7 @@ import * as r from "rethinkdb";
 import {DbService} from "./db/db.service";
 import {RegistrationService} from "./registration/registration.service";
 import * as dbcfg from "./db/db.config";
-import {GatewayService} from "./rest/gateway/gateway.service";
+import {GatewayService} from "./gateway/gateway.service";
 import {EventBus} from "./messagebus/messagebus.service";
 import Express = require('express');
 

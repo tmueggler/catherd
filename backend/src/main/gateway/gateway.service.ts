@@ -1,6 +1,6 @@
-import {DbService} from "../../db/db.service";
+import {DbService} from "../db/db.service";
 import * as r from "rethinkdb";
-import * as DBCFG from "../../db/db.config"
+import * as DBCFG from "../db/db.config"
 
 export class GatewayService {
     constructor(private db: DbService) {

@@ -2,12 +2,12 @@
   "name": "catherd-backend",
   "version": "0.0.0",
   "scripts": {
-    "compile": "gulp && tsc -p src/",
+    "compile": "gulp && tsc -p tsconfig.json",
     "build": "npm run compile",
     "prestart": "npm run compile",
-    "start": "node dist/server.js",
-    "db:init": "npm run compile && node dist/db.init.js",
-    "db:clean": "npm run compile && node dist/db.clean.js"
+    "start": "node test/node/server.js",
+    "db:init": "npm run compile && node test/scripts/db.init.js",
+    "db:clean": "npm run compile && node test/scripts/db.clean.js"
   },
   "dependencies": {
     "express": "^4.14.1",
