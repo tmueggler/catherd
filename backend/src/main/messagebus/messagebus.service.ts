@@ -2,9 +2,9 @@ import {Server as HttpServer} from "http";
 import {Server, createServer, Connection} from "sockjs";
 import {Message, MessageType, SignIn, SignOut} from "@catherd/api/node";
 
-export class EventBus {
+export class MessageBus {
     private server: Server;
-    private connectionHandler: EventBusConnectionHandler;
+    private connectionHandler: MessageBusConnectionHandler;
 
     start(http: HttpServer) {
         if (this.server) {
@@ -14,14 +14,14 @@ export class EventBus {
         s.on('connection', this.newConnection.bind(this));
 
         let dispatcher = new DispatchingMessageHandler();
-        this.connectionHandler = new EventBusConnectionHandler(dispatcher);
+        this.connectionHandler = new MessageBusConnectionHandler(dispatcher);
 
         s.installHandlers(http, {prefix: '/eventbus'});
         this.server = s;
     }
 
     private newConnection(con: Connection) {
-        new EventBusConnection(con, this.connectionHandler);
+        new MessageBusConnection(con, this.connectionHandler);
     }
 
     stop() {
@@ -31,8 +31,8 @@ export class EventBus {
     }
 }
 
-class EventBusConnection {
-    constructor(private readonly con: Connection, private readonly handler: EventBusConnectionHandler) {
+class MessageBusConnection {
+    constructor(private readonly con: Connection, private readonly handler: MessageBusConnectionHandler) {
         con.on('data', this.ondata.bind(this));
         con.on('close', this.onerror.bind(this));
         con.on('error', this.onclose.bind(this));
@@ -62,13 +62,13 @@ class EventBusConnection {
     }
 }
 
-class EventBusConnectionHandler {
-    private connections: Map<string, EventBusConnection> = new Map();
+class MessageBusConnectionHandler {
+    private connections: Map<string, MessageBusConnection> = new Map();
 
     constructor(private readonly handler: MessageHandler<any>) {
     }
 
-    handle(con: EventBusConnection, msg: Message) {
+    handle(con: MessageBusConnection, msg: Message) {
         try {
             switch (msg.type) {
                 case SignIn.TYPE:
@@ -86,7 +86,7 @@ class EventBusConnectionHandler {
         }
     }
 
-    private interceptSignIn(src: EventBusConnection, msg: SignIn) {
+    private interceptSignIn(src: MessageBusConnection, msg: SignIn) {
         let uuid = msg.from;
         let existing = this.connections.get(uuid);
         if (existing) {
@@ -100,7 +100,7 @@ class EventBusConnectionHandler {
         this.handleMessage(src, msg);
     }
 
-    private interceptSignOut(src: EventBusConnection, msg: SignOut) {
+    private interceptSignOut(src: MessageBusConnection, msg: SignOut) {
         let uuid = msg.from;
         let existing = this.connections.get(uuid);
         if (!existing) {
@@ -115,7 +115,7 @@ class EventBusConnectionHandler {
         }
     }
 
-    private handleMessage(src: EventBusConnection, msg: Message) {
+    private handleMessage(src: MessageBusConnection, msg: Message) {
         let res = this.handler.handle(msg);
         if (!res) {
             return;
@@ -129,7 +129,7 @@ class EventBusConnectionHandler {
         dst.send(res);
     }
 
-    error(con: EventBusConnection, err: any) {
+    error(con: MessageBusConnection, err: any) {
         try {
             con.close();
         } catch (err) {
@@ -139,7 +139,7 @@ class EventBusConnectionHandler {
         }
     }
 
-    close(con: EventBusConnection) {
+    close(con: MessageBusConnection) {
         if (con.uuid) {
             this.connections.delete(con.uuid);
             con.uuid = null;
