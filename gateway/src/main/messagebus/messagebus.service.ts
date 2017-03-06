@@ -16,7 +16,7 @@ export class MessageBus {
         this.subject = new Subject();
         this.publisher = this.subject.publish();
         this.connection = new MessageBusConnection(
-            `${this.url}/eventbus`,
+            `${this.url}/messagebus`,
             {
                 open: (con: MessageBusConnection) => events.send({type: MessageBusEvent.CONNECTED, src_id: null}),
                 message: (con: MessageBusConnection, msg: Message) => this.subject.next(msg),

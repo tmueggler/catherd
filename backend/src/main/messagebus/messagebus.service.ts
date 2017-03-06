@@ -18,7 +18,7 @@ export class MessageBus {
 
         this.connectionHandler = new MessageBusConnectionHandler(this.handler);
 
-        s.installHandlers(http, {prefix: '/eventbus'});
+        s.installHandlers(http, {prefix: '/messagebus'});
         this.server = s;
     }
 
