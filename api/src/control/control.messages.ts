@@ -20,6 +20,6 @@ export namespace Shutdown {
     export const TYPE: MessageType = 13;
 }
 
-export interface Shutdown {
+export interface Shutdown extends Message {
     delay_ms: number;
 }
