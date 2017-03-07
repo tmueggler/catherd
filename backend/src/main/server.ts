@@ -5,10 +5,7 @@ import {DbService} from "./db/db.service";
 import {RegistrationService} from "./registration/registration.service";
 import * as dbcfg from "./db/db.config";
 import {GatewayService} from "./gateway/gateway.service";
-import {MessageBus, DispatchingMessageHandler} from "./messagebus/messagebus.service";
-import {SignIn, SignOut} from "@catherd/api/node";
-import {SignInHandler} from "./registration/signin.handler";
-import {SignOutHandler} from "./registration/signout.handler";
+import {MessageBus} from "./messagebus/messagebus.service";
 import Express = require('express');
 
 const serverPort = 3000;
@@ -63,11 +60,7 @@ rest.delete('/gateway/:uuid', function (req, res, next) {
         });
 });
 
-let $dispacher = new DispatchingMessageHandler();
-$dispacher.register(SignIn.TYPE, new SignInHandler($registrations));
-$dispacher.register(SignOut.TYPE, new SignOutHandler($registrations));
-
-let messagebbus = new MessageBus($dispacher);
+let messagebbus = new MessageBus();
 messagebbus.start(server);
 
 server.listen(serverPort, function () {
