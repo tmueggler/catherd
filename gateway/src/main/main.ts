@@ -1,8 +1,7 @@
 import {EventBus} from "./eventbus/eventbus.service";
 import {MessageBus} from "./messagebus/messagebus.service";
 import {GatewayConfig, GatewayConfigProvider} from "./gateway.config";
-import {RegistrationService} from "./registration/registration.service";
-import {RegistrationController} from "./registration/registration.controller";
+import {StateController} from "./state/state.controller";
 import {MessageBusController} from "./messagebus/messagebus.controller";
 import {Context, DefaultBeanFactory, BeanName, DefaultContext} from "@catherd/inject/node";
 import {EventBusBeanPostProcessor} from "./eventbus/eventbus.beanpostprocessor";
@@ -44,19 +43,11 @@ $$factories.define({
 });
 
 $$factories.define({
-    name: AppBeans.REGISTRATION_SERVICE, create: (name: BeanName, ctx: Context) => {
-        return new RegistrationService(
-            ctx.get<GatewayConfig>(AppBeans.APP_CONFIG),
-            ctx.get<MessageBus>(AppBeans.MESSAGE_BUS)
-        );
-    }
-});
-
-$$factories.define({
     name: 'registration-service-controller',
     create: (name: BeanName, ctx: Context) => {
-        return new RegistrationController(
-            ctx.get<RegistrationService>(AppBeans.REGISTRATION_SERVICE)
+        return new StateController(
+            ctx.get<GatewayConfig>(AppBeans.APP_CONFIG),
+            ctx.get<MessageBus>(AppBeans.MESSAGE_BUS)
         )
     }
 });
