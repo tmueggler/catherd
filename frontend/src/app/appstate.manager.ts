@@ -1,9 +1,9 @@
 import {Injectable} from "@angular/core";
-import {EventBus} from "./messagebus/messagebus.service";
+import {MessageBus} from "./messagebus/messagebus.service";
 
 @Injectable()
 export class AppStateManager {
-    constructor(private eventBus: EventBus) {
+    constructor(private eventBus: MessageBus) {
     }
 
     start() {

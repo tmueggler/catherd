@@ -1,11 +1,11 @@
 import {Injectable} from "@angular/core";
-import {EventBus} from "../messagebus/messagebus.service";
+import {MessageBus} from "../messagebus/messagebus.service";
 import {Gateway} from "./gateway.model";
 import {Restart, Update, Shutdown} from "@catherd/api/web";
 
 @Injectable()
 export class GatewayControlService {
-    constructor(private readonly eventbus: EventBus) {
+    constructor(private readonly eventbus: MessageBus) {
     }
 
     restart(trg: Gateway) {
