@@ -14,7 +14,7 @@ export class RegistrationService {
             version: null
         };
         try {
-            this.$messaging.send(msg);
+            this.$messaging.send('/', msg);
         } catch (e) {
             console.warn(`Problem sending SingIn. Reason ${e}`);
         }
@@ -27,7 +27,7 @@ export class RegistrationService {
             to: null
         };
         try {
-            this.$messaging.send(msg);
+            this.$messaging.send('/', msg);
         } catch (e) {
             console.warn(`Problem sending SignOut. Reason ${e}`);
         }
