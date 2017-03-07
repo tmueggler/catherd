@@ -3,7 +3,7 @@ import {BrowserModule} from "@angular/platform-browser";
 import {AppComponent} from "./app.component";
 import {Configuration} from "./app.config";
 import {AppStateManager} from "./appstate.manager";
-import {EventBus} from "./messagebus/eventbus.service";
+import {EventBus} from "./messagebus/messagebus.service";
 import {RouterModule, Routes} from "@angular/router";
 import {GatewayModule} from "./gateway/gateway.module";
 import {GatewayListComponent} from "./gateway/gateway-list.component";
