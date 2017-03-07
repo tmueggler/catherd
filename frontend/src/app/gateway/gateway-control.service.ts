@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core";
-import {EventBus} from "../eventbus.service";
+import {EventBus} from "../messagebus/eventbus.service";
 import {Gateway} from "./gateway.model";
 import {Restart, Update, Shutdown} from "@catherd/api/web";
 

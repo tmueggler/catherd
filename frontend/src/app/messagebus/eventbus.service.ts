@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core";
-import {Configuration} from "./app.config";
+import {Configuration} from "../app.config";
 import {Message} from "@catherd/api/web";
 import * as SockJS from "sockjs-client";
 import Stomp = require("stompjs");
