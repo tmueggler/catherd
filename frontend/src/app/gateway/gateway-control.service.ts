@@ -15,7 +15,7 @@ export class GatewayControlService {
             to: trg.uuid,
             delay_ms: 0
         };
-        this.eventbus.send(msg);
+        this.eventbus.send('/', msg);
     }
 
     update(trg: Gateway) {
@@ -25,15 +25,16 @@ export class GatewayControlService {
             to: trg.uuid,
             version: null
         };
-        this.eventbus.send(msg);
+        this.eventbus.send('/', msg);
     }
 
     shutdown(trg: Gateway) {
-        this.eventbus.send({
+        let msg: Shutdown = {
             type: Shutdown.TYPE,
             from: null,
             to: trg.uuid,
             delay_ms: 0
-        });
+        };
+        this.eventbus.send('/', msg);
     }
 }

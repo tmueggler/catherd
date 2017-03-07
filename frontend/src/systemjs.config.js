@@ -14,6 +14,7 @@
             '@angular/http': 'npm:@angular/http/bundles/http.umd.js',
             'rxjs': 'npm:rxjs',
             'sockjs-client': 'npm:sockjs-client/dist/sockjs.js',
+            'stompjs': 'npm:stompjs/lib/stomp.js',
             '@catherd/api/web': 'npm:@catherd/api/web/api.umd.js'
         },
         packages: {
@@ -22,6 +23,12 @@
             },
             rxjs: {
                 defaultExtensions: '*.js'
+            }
+        },
+        meta: {
+            'npm:stompjs/lib/stomp.js': {
+                format: 'global',
+                'exports': 'Stomp'
             }
         }
     });

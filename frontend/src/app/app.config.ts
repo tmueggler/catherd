@@ -4,7 +4,7 @@ export namespace Configuration {
     @Injectable()
     export class AppCfg {
         readonly global: GlobalCfg;
-        readonly socketIo: SocketIOCfg;
+        readonly messagebus: MessageBusCfg;
 
         constructor() {
             this.global = {
@@ -12,7 +12,7 @@ export namespace Configuration {
                 host: 'localhost',
                 port: 3000
             };
-            this.socketIo = {
+            this.messagebus = {
                 url: `${this.global.protocol}://${this.global.host}:${this.global.port}/messagebus`
             }
         }
@@ -24,7 +24,7 @@ export namespace Configuration {
         readonly port: number;
     }
 
-    export interface SocketIOCfg {
+    export interface MessageBusCfg {
         readonly url: string;
     }
 }
