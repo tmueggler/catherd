@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "compile": "gulp && tsc -p tsconfig.json",
+    "build": "npm run compile",
     "prestart": "npm run compile",
     "start": "node test/node/index.js"
   },
