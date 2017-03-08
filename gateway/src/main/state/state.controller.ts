@@ -4,7 +4,7 @@ import {EventBusObserver} from "../eventbus/eventbus.beanpostprocessor";
 import {MessageBusEvent} from "../messagebus/messagebus.event";
 import {MessageBus} from "../messagebus/messagebus.service";
 import {GatewayConfig} from "../gateway.config";
-import {GatewayState, StateChange} from "@catherd/api/web";
+import {GatewayState, StateChange} from "@catherd/api/node";
 
 @EventBusObserver()
 export class StateController implements NextObserver<Event> {
