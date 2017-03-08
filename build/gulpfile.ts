@@ -1,15 +1,15 @@
 import {task, src} from "gulp";
 import {runNpmScript} from "./src/gulp.plugins";
 
-const MOULE_GULP = '../gulp-dependencies';
 const MODULE_API = '../api';
 const MODULE_BACKEND = '../backend';
 const MOUDLE_FRONTEND = '../frontend';
 const MODULE_GATEWAY = '../gateway';
+const MODULE_LOGCAT = '../logcat';
 
 const MODULES = [
-    MOULE_GULP,
     MODULE_API,
+    MODULE_LOGCAT,
     MODULE_BACKEND,
     MOUDLE_FRONTEND,
     MODULE_GATEWAY
