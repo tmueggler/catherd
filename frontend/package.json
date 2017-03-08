@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "compile": "gulp && tsc -p src/",
+    "build": "npm run compile",
     "compile:watch": "tsc -p src/ -w",
     "serve": "lite-server",
     "prestart": "npm run compile",
