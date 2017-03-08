@@ -6,7 +6,10 @@ import {RegistrationService} from "./registration/registration.service";
 import * as dbcfg from "./db/db.config";
 import {GatewayService} from "./gateway/gateway.service";
 import {MessageBus} from "./messagebus/messagebus.service";
+import {MessageReceiver} from "./messagebus/message.receiver";
+import {MessagingCfg} from "./messagebus/messagebus.config";
 import Express = require('express');
+import {GatewayMessageProcessor} from "./gateway/gateway.messageprocessor";
 
 const serverPort = 3000;
 const DB: r.ConnectionOptions = {
@@ -60,7 +63,11 @@ rest.delete('/gateway/:uuid', function (req, res, next) {
         });
 });
 
-let messagebbus = new MessageBus();
+let messagereceiver = new MessageReceiver(MessagingCfg.RECEIVER);
+messagereceiver.subscribe('/gateway/+/#', new GatewayMessageProcessor());
+messagereceiver.start();
+
+let messagebbus = new MessageBus(MessagingCfg.SERVER);
 messagebbus.start(server);
 
 server.listen(serverPort, function () {

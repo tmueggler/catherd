@@ -1,13 +1,12 @@
 import {Connection} from "sockjs";
 import {MessageBus} from "./messagebus.service";
 import * as Mqtt from "mqtt";
+import {MessagingCfg} from "./messagebus.config";
 
 export class StompMqttRelay implements MessageBus.ConnectionHandler {
-    private readonly brokerUrl: string;
     private readonly connections: Map<string, Relay>;
 
-    constructor() {
-        this.brokerUrl = 'mqtt://192.168.56.104:1883';
+    constructor(private readonly cfg: MessagingCfg.ServerCfg.StompCfg) {
         this.connections = new Map();
     }
 
@@ -15,7 +14,7 @@ export class StompMqttRelay implements MessageBus.ConnectionHandler {
         let relay: Relay = this.connections.get(con.id);
         if (!relay) {
             try {
-                let mqtt = Mqtt.connect(this.brokerUrl);
+                let mqtt = Mqtt.connect(this.cfg.broker_url);
                 relay = new Relay(con, mqtt);
                 this.connections.set(con.id, relay);
             } catch (error) {
