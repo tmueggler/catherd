@@ -2,6 +2,7 @@ import * as SockJS from "sockjs-client";
 import * as t from "timers";
 import {MessageBusConnection} from "./messagebus.service";
 import {Message} from "@catherd/api/node";
+import {LoggerFactory} from "@catherd/logcat/node";
 import EventEmitter = NodeJS.EventEmitter;
 
 namespace WebSocket {
@@ -12,6 +13,7 @@ namespace WebSocket {
 }
 
 export class SockJSConnection {
+    private readonly log = LoggerFactory.get('sockjs-connection');
     reconnect_ms: number;
 
     constructor(private readonly url: string) {
@@ -36,20 +38,20 @@ export class SockJSConnection {
     }
 
     private sockOpen(sock: WebSocket): void {
-        console.log(`Connection to ${this.url} open`);
+        this.log.debug(`Connection to ${this.url} open`);
         this.clearReconnectTimeout();
         this.sock = sock;
         this.fireOpen();
     }
 
     private sockMessage(msg: string): void {
-        console.log(`Received message ${msg}`);
+        this.log.debug(`Received message ${msg}`);
         let parsed = JSON.parse(msg);
         // TODO
     }
 
     private sockError(evt: ErrorEvent): void {
-        console.warn(`WebSocket error ${evt}`);
+        this.log.warn(`WebSocket error ${evt}`);
         this.fireError(evt);
     }
 
@@ -57,7 +59,7 @@ export class SockJSConnection {
         if (evt.wasClean) {
             this.sockClosedClean();
         } else {
-            console.warn(`Connection to ${this.url} lost. Reason ${evt.code} ${evt.reason}`);
+            this.log.warn(`Connection to ${this.url} lost. Reason ${evt.code} ${evt.reason}`);
             this.sockClosedDirty();
         }
     }
@@ -85,7 +87,7 @@ export class SockJSConnection {
 
     private reconnect(delay_ms: number) {
         this.clearReconnectTimeout();
-        console.log(`Trying reconnect to ${this.url} in ${this.reconnect_ms}ms`);
+        this.log.debug(`Trying reconnect to ${this.url} in ${this.reconnect_ms}ms`);
         this.reconnectTimeout = t.setTimeout(() => this.connect(), delay_ms);
     }
 

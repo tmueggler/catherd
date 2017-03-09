@@ -1,8 +1,11 @@
 import {MessageBusConnection} from "./messagebus.service";
 import {Message} from "@catherd/api/node";
 import * as Mqtt from "mqtt";
+import {LoggerFactory} from "@catherd/logcat/node";
 
 export class MqttConnection implements MessageBusConnection {
+    private readonly log = LoggerFactory.get('mqtt-connection');
+
     constructor(private readonly url: string) {
     }
 
@@ -52,7 +55,7 @@ export class MqttConnection implements MessageBusConnection {
     }
 
     private mqttConnect(): void {
-        console.log(`Mqtt connect ${this.url}`);
+        this.log.debug(`Mqtt connect ${this.url}`);
         this._connected = true;
         this.fireConnected();
     }
@@ -64,23 +67,23 @@ export class MqttConnection implements MessageBusConnection {
 
     private mqttClose(): void {
         this._connected = false;
-        console.log(`Mqtt close`);
+        this.log.debug(`Mqtt close`);
         this.fireDisconnected()
     }
 
     private mqttError(error: any): void {
-        console.log(`Mqtt error ${error}`);
+        this.log.debug(`Mqtt error ${error}`);
         this.fireError(error);
     }
 
     private mqttOffline(): void {
         this._connected = false;
-        console.log(`Mqtt offline`)
+        this.log.debug(`Mqtt offline`)
     }
 
     private mqttReconnect(): void {
         this._connected = false;
-        console.log(`Mqtt reconnect`)
+        this.log.debug(`Mqtt reconnect`)
     }
 
     onconnected: (con: MessageBusConnection) => void;

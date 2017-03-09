@@ -3,6 +3,7 @@ import {BeanPostProcessor, BeanName, Context, ContextLifecycle} from "@catherd/i
 import {EventBus} from "../eventbus/eventbus.service";
 import {AppEvent} from "./app.event";
 import {AppBeans} from "./app.beans";
+import {LoggerFactory} from "@catherd/logcat/node";
 
 namespace LifecycleMetadata {
     const NAMESPACE = 'applifecycle';
@@ -41,6 +42,8 @@ export function Stop(phase?: number) {
 }
 
 class Run {
+    private readonly log = LoggerFactory.get(LOGGER_NAME);
+
     constructor(public readonly phase: number, private readonly target: any, private readonly method: string) {
     }
 
@@ -52,7 +55,7 @@ class Run {
         try {
             this.run();
         } catch (e) {
-            console.warn(`Uncaught exception running ${this}. Reason ${e}`);
+            this.log.warn(`Uncaught exception running ${this}. Reason ${e}`);
         }
     }
 
@@ -82,7 +85,10 @@ class Run {
     }
 }
 
+const LOGGER_NAME = 'applifecycle-beanpostprocessor';
+
 export class AppLifecycleBeanPostProcessor implements BeanPostProcessor {
+    private readonly log = LoggerFactory.get(LOGGER_NAME);
     private isInitialized: boolean = false;
     private isDestroyed: boolean = false;
     private pendingStart: Run[] = [];
