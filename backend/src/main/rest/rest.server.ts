@@ -50,14 +50,14 @@ function Cors(req: Request, res: Response, next: NextFunction): void {
 
 function GatewayApi(ctx: Context): Router {
     let app = Express.Router();
-    app.get('/all', GatewayApi.All(null, ctx));
-    app.get('/:uuid', GatewayApi.Uuid(null, ctx));
+    app.get('/all', GatewayApi.GetAll(null, ctx));
+    app.get('/:uuid', GatewayApi.GetByUuid(null, ctx));
     app.delete('/:uuid', GatewayApi.Delete(null, ctx));
     return app;
 }
 
 namespace GatewayApi {
-    export function All(name: BeanName, ctx: Context): RequestHandler {
+    export function GetAll(name: BeanName, ctx: Context): RequestHandler {
         let $gateway = ctx.get<GatewayService>(ServerBeans.GATEWAY_SERVICE);
         return function (req: Request, res: Response, next: NextFunction): void {
             let uuid = req.params['uuid'];
@@ -72,7 +72,7 @@ namespace GatewayApi {
         }
     }
 
-    export function Uuid(name: BeanName, ctx: Context): RequestHandler {
+    export function GetByUuid(name: BeanName, ctx: Context): RequestHandler {
         let $gateway = ctx.get<GatewayService>(ServerBeans.GATEWAY_SERVICE);
         return function (req: Request, res: Response, next: NextFunction): void {
             let uuid = req.params['uuid'];
