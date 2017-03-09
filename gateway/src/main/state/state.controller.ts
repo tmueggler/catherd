@@ -4,12 +4,19 @@ import {EventBusObserver} from "../eventbus/eventbus.beanpostprocessor";
 import {MessageBusEvent} from "../messagebus/messagebus.event";
 import {MessageBus} from "../messagebus/messagebus.service";
 import {GatewayConfig} from "../gateway.config";
-import {GatewayState, StateChange} from "@catherd/api/node";
+import {Gateway, StateChange} from "@catherd/api/node";
 
 @EventBusObserver()
 export class StateController implements NextObserver<Event> {
+    private info: Gateway.Info;
+
     constructor(private readonly cfg: GatewayConfig,
                 private readonly messaging: MessageBus) {
+        this.info = {
+            uuid: cfg.uuid,
+            version: '0.0.0',
+            state: Gateway.State.OFFLINE
+        }
     }
 
     next(evt: Event) {
@@ -25,25 +32,17 @@ export class StateController implements NextObserver<Event> {
         }
     }
 
-    private state: GatewayState = GatewayState.OFFLINE;
-
     private connected() {
-        let msg: StateChange<GatewayState> = {
+        this.info.state = Gateway.State.ONLINE;
+        let msg: StateChange<Gateway.Info> = {
             type: StateChange.TYPE,
-            before: this.state,
-            after: GatewayState.ONLINE
+            before: null,
+            after: this.info
         };
-        this.state = GatewayState.ONLINE;
-        this.messaging.send(`/gateway/${this.cfg.uuid}/state`, msg);
+        this.messaging.send(`/gateway/${this.cfg.uuid}/info`, msg);
     }
 
     private disconnected() {
-        let msg: StateChange<GatewayState> = {
-            type: StateChange.TYPE,
-            before: this.state,
-            after: GatewayState.OFFLINE
-        };
-        this.state = GatewayState.OFFLINE;
-        this.messaging.send(`/gateway/${this.cfg.uuid}/state`, msg);
+        this.info.state = Gateway.State.OFFLINE;
     }
 }
