@@ -12,6 +12,7 @@
   "dependencies": {
     "express": "^4.14.1",
     "mqtt": "^2.4.0",
+    "reflect-metadata": "^0.1.10",
     "rethinkdb": "^2.3.3",
     "sockjs": "^0.3.18",
     "stompjs": "^2.3.3",

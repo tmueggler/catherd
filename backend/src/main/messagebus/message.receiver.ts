@@ -3,9 +3,20 @@ import {LoggerFactory} from "@catherd/logcat/node";
 import * as Mqtt from "mqtt";
 import * as Uuid from "uuid";
 import {MessagingCfg} from "./messagebus.config";
+import ReceiverCfg = MessagingCfg.ReceiverCfg;
 
 export type SubscriptionId = string;
 export type Topic = string;
+
+export interface MessageReceiver {
+    subscribe(topic: Topic, processor: MessageProcessor<any>): Subscription;
+    start(): void;
+    stop(): void;
+}
+
+export interface MessageTransmitter {
+    send(topic: Topic, msg: any): void;
+}
 
 export interface Subscription {
     readonly id: SubscriptionId;
@@ -17,9 +28,13 @@ export interface MessageProcessor<M> {
     process(topic: Topic, msg: Message): void;
 }
 
+export function Default(cfg: ReceiverCfg): MessageReceiver & MessageTransmitter {
+    return new DefaultMessageTransceiver(cfg);
+}
+
 const LOGGER_NAME = 'message-receiver';
 
-export class MessageReceiver {
+class DefaultMessageTransceiver implements MessageReceiver, MessageTransmitter {
     private readonly log = LoggerFactory.get(LOGGER_NAME);
     private readonly subscriptions: Subscriptions;
     private readonly processors: Processors;
@@ -105,7 +120,7 @@ export class MessageReceiver {
         return sub;
     }
 
-    __unsubscribe(sub: __SubscriptionImpl): Subscription {
+    unsubscribe(sub: __SubscriptionImpl): Subscription {
         let removed = this.subscriptions.remove(sub.topic, sub);
         this.processors.remove(sub.topic, sub.processor);
         if (this.client && removed && this.subscriptions.size(sub.topic) === 0) { // If it was the last subscription
@@ -119,17 +134,29 @@ export class MessageReceiver {
         }
         return null;
     }
+
+    send(topic: Topic, msg: Message): void {
+        if (!this.client) {
+            throw new Error('No connection');
+        }
+        let payload = JSON.stringify(msg);
+        this.client.publish(topic, payload, {}, (error: any) => {
+            if (error) {
+                this.log.warn(`Send message to ${topic} failed. Reason ${error}`);
+            }
+        });
+    }
 }
 
 class __SubscriptionImpl implements Subscription {
     constructor(readonly id: SubscriptionId,
                 readonly topic: Topic,
                 readonly processor: MessageProcessor<any>,
-                private readonly delegate: MessageReceiver) {
+                private readonly delegate: DefaultMessageTransceiver) {
     }
 
     unsubscribe(): Subscription {
-        return this.delegate.__unsubscribe(this);
+        return this.delegate.unsubscribe(this);
     }
 }
 

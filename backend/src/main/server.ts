@@ -6,70 +6,91 @@ import {RegistrationService} from "./registration/registration.service";
 import * as dbcfg from "./db/db.config";
 import {GatewayService} from "./gateway/gateway.service";
 import {MessageBus} from "./messagebus/messagebus.service";
-import {MessageReceiver} from "./messagebus/message.receiver";
+import {Default as MessageTransceiver, MessageReceiver} from "./messagebus/message.receiver";
 import {MessagingCfg} from "./messagebus/messagebus.config";
-import Express = require('express');
 import {GatewayMessageProcessor} from "./gateway/gateway.messageprocessor";
+import {AuthMessageProcessor} from "./auth/auth.messageprocessor";
+import {Create as CreateRestServer, RestServer} from "./rest/rest.server";
+import {DefaultBeanFactory, DefaultContext} from "@catherd/inject/node";
+import {ServerBeans} from "./server.beans";
+import {GatewayRepo} from "./gateway/gateway.repo";
 
-const serverPort = 3000;
+let $$factores = new DefaultBeanFactory();
+
+$$factores.define({
+    name: ServerBeans.SERVER,
+    create: () => {
+        return http.createServer();
+    }
+});
+
+$$factores.define({
+    name: ServerBeans.REST_SERVER,
+    create: (name, ctx) => {
+        return CreateRestServer(name, ctx);
+    }
+});
+
 const DB: r.ConnectionOptions = {
     host: dbcfg.HOST,
     port: dbcfg.PORT
 };
 
-let rest: Express.Express = Express();
-let server: Server = http.createServer(rest);
-
-let $db = new DbService(DB).start();
-let $registrations = new RegistrationService($db);
-let $gateway = new GatewayService($db);
-
-rest.use(function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Methods", "GET, POST, DELETE");
-    next();
-});
-
-rest.get('/gateway/:uuid', function (req, res, next) {
-    let uuid = req.params['uuid'];
-    if (uuid == 'all') {
-        $gateway.all()
-            .then((result) => {
-                res.send(result);
-            })
-            .catch((err) => {
-                console.log(`Problem retrieving all gateways. Reason ${err}`);
-                res.sendStatus(500);
-            })
-    } else {
-        $gateway.get(uuid)
-            .then((result) => {
-                res.send(result);
-            })
-            .catch((err) => {
-                res.sendStatus(500);
-            })
+$$factores.define({
+    name: ServerBeans.DB_SERVICE,
+    create: () => {
+        return new DbService(DB);
     }
 });
 
-rest.delete('/gateway/:uuid', function (req, res, next) {
-    let uuid = req.params['uuid'];
-    $gateway.delete(uuid)
-        .then((result) => {
-            res.sendStatus(200);
-        })
-        .catch((err) => {
-            res.sendStatus(500);
-        });
+$$factores.define({
+    name: ServerBeans.REGISTRATION_SERVICE,
+    create: (name, ctx) => {
+        return new RegistrationService(ctx.get<DbService>(ServerBeans.DB_SERVICE));
+    }
 });
 
-let messagereceiver = new MessageReceiver(MessagingCfg.RECEIVER);
-messagereceiver.subscribe('/gateway/+/#', new GatewayMessageProcessor());
-messagereceiver.start();
+$$factores.define({
+    name: ServerBeans.GATEWAY_SERVICE,
+    create: (name, ctx) => {
+        return new GatewayService(ctx.get<DbService>(ServerBeans.DB_SERVICE));
+    }
+});
 
-let messagebbus = new MessageBus(MessagingCfg.SERVER);
-messagebbus.start(server);
+$$factores.define({
+    name: ServerBeans.GATEWAY_REPO,
+    create: () => {
+        return new GatewayRepo();
+    }
+});
 
-server.listen(serverPort, function () {
+$$factores.define({
+    name: ServerBeans.MESSAGE_TRANSCEIVER,
+    create: (name, ctx) => {
+        let b = MessageTransceiver(MessagingCfg.RECEIVER);
+        b.subscribe('/auth/+/+/#', new AuthMessageProcessor(b));
+        b.subscribe('/gateway/+/#', new GatewayMessageProcessor(b, ctx.get<GatewayRepo>(ServerBeans.GATEWAY_REPO)));
+        return b;
+    }
+});
+
+let $ctx = DefaultContext.initialize($$factores);
+
+const serverPort = 3000;
+let $server = $ctx.get<Server>(ServerBeans.SERVER);
+
+let $db = $ctx.get<DbService>(ServerBeans.DB_SERVICE);
+$db.start();
+
+let $rest = $ctx.get<RestServer>(ServerBeans.REST_SERVER);
+$rest.start($server);
+
+let $messagetx = $ctx.get<MessageReceiver>(ServerBeans.MESSAGE_TRANSCEIVER);
+$messagetx.start();
+
+let $messagebbus = new MessageBus(MessagingCfg.SERVER);
+$messagebbus.start($server);
+
+$server.listen(serverPort, function () {
     console.info(`Backend listening @${serverPort}`);
 });
