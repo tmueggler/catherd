@@ -1,6 +1,7 @@
 import {Message, MessageType} from "../generic.messages";
+
 export namespace StateChange {
-    export const TYPE: MessageType = 1;
+    export const TYPE: MessageType = 21;
 }
 
 export interface StateChange<T> extends Message {
