@@ -3,6 +3,11 @@ import {LoggerFactory} from "@catherd/logcat/node";
 import * as Mqtt from "mqtt";
 import * as Uuid from "uuid";
 import {MessagingCfg} from "./messagebus.config";
+import {BeanName, Context} from "@catherd/inject/node";
+import {AuthMessageProcessor} from "../auth/auth.messageprocessor";
+import {GatewayMessageProcessor} from "../gateway/gateway.messageprocessor";
+import {GatewayRepo} from "../gateway/gateway.repo";
+import {ServerBeans} from "../server.beans";
 import ReceiverCfg = MessagingCfg.ReceiverCfg;
 
 export type SubscriptionId = string;
@@ -28,8 +33,11 @@ export interface MessageProcessor<M> {
     process(topic: Topic, msg: Message): void;
 }
 
-export function Default(cfg: ReceiverCfg): MessageReceiver & MessageTransmitter {
-    return new DefaultMessageTransceiver(cfg);
+export function Create(name: BeanName, ctx: Context): MessageReceiver & MessageTransmitter {
+    let b = new DefaultMessageTransceiver(MessagingCfg.RECEIVER);
+    b.subscribe('/auth/+/+/#', new AuthMessageProcessor(b));
+    b.subscribe('/gateway/+/#', new GatewayMessageProcessor(b, ctx.get<GatewayRepo>(ServerBeans.GATEWAY_REPO)));
+    return b;
 }
 
 const LOGGER_NAME = 'message-receiver';
