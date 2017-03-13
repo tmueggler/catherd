@@ -1,7 +1,7 @@
 import {Component, OnInit} from "@angular/core";
-import {Gateway} from "./gateway.model";
 import {Http, Response} from "@angular/http";
 import {GatewayControlService} from "./gateway-control.service";
+import {Gateway} from "@catherd/api/web";
 
 @Component({
     selector: 'gateway-list',
@@ -14,7 +14,7 @@ export class GatewayListComponent implements OnInit {
         this.url = 'http://localhost:3000';
     }
 
-    gateways: Gateway[] = [];
+    gateways: Gateway.Info[] = [];
 
     ngOnInit() {
         this.http.get(`${this.url}/gateway/authorized`)
@@ -23,22 +23,22 @@ export class GatewayListComponent implements OnInit {
             });
     }
 
-    delete(trg: Gateway) {
+    delete(trg: Gateway.Info) {
         this.http.delete(`${this.url}/gateway/${trg.uuid}`)
             .subscribe((res: Response) => {
                 // TODO update model
             });
     }
 
-    restart(trg: Gateway) {
+    restart(trg: Gateway.Info) {
         this.control.restart(trg);
     }
 
-    update(trg: Gateway) {
+    update(trg: Gateway.Info) {
         this.control.update(trg);
     }
 
-    shutdown(trg: Gateway) {
+    shutdown(trg: Gateway.Info) {
         this.control.shutdown(trg);
     }
 }
