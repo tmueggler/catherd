@@ -6,23 +6,25 @@ import {AppStateManager} from "./appstate.manager";
 import {MessageBus} from "./messagebus/messagebus.service";
 import {RouterModule, Routes} from "@angular/router";
 import {GatewayModule} from "./gateway/gateway.module";
-import {GatewayListComponent} from "./gateway/gateway-list.component";
 import {DashboardComponent} from "./dashboard/dashboard.component";
+import {PageNotFoundComponent} from "./page-not-found.component";
 
 const ROUTES: Routes = [
-    {path: 'gateway', component: GatewayListComponent},
-    {path: '', component: DashboardComponent}
+    {path: 'dashboard', component: DashboardComponent},
+    {path: '', redirectTo: 'dashboard', pathMatch: 'full'},
+    {path: '**', component: PageNotFoundComponent}
 ];
 
 @NgModule({
     imports: [
         BrowserModule,
-        RouterModule.forRoot(ROUTES),
-        GatewayModule
+        GatewayModule,
+        RouterModule.forRoot(ROUTES)
     ],
     declarations: [
         AppComponent,
-        DashboardComponent
+        DashboardComponent,
+        PageNotFoundComponent
     ],
     providers: [
         Configuration.AppCfg,
