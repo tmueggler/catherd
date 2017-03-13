@@ -22,7 +22,7 @@ class StateChangeHandler implements MessageHandler<StateChange<any>> {
 
     handle(topic: Topic, msg: StateChange<any>): DoTransmit {
         let parts = topic.split('/');
-        return this.dohandle(parts[0], parts[1], parts[2], msg);
+        return this.dohandle(parts[1], parts[2], parts[3], msg);
     }
 
     private dohandle(target: string, uuid: string, property: string, msg: StateChange<any>): DoTransmit {
