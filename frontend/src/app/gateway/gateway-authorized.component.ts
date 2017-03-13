@@ -5,9 +5,9 @@ import {Gateway} from "@catherd/api/web";
 
 @Component({
     selector: 'gateway-list',
-    templateUrl: 'app/gateway/gateway-list.component.html',
+    templateUrl: 'app/gateway/gateway-authorized.component.html',
 })
-export class GatewayListComponent implements OnInit {
+export class GatewayAuthorizedComponent implements OnInit {
     private readonly url: string;
 
     constructor(private http: Http, private readonly control: GatewayControlService) {

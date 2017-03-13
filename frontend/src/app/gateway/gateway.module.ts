@@ -1,5 +1,5 @@
 import {NgModule} from "@angular/core";
-import {GatewayListComponent} from "./gateway-list.component";
+import {GatewayAuthorizedComponent} from "./gateway-authorized.component";
 import {CommonModule} from "@angular/common";
 import {HttpModule} from "@angular/http";
 import {GatewayControlService} from "./gateway-control.service";
@@ -11,7 +11,7 @@ const ROUTES: Routes = [
     {
         path: 'gateways', component: GatewaysComponent,
         children: [
-            {path: 'authorized', component: GatewayListComponent},
+            {path: 'authorized', component: GatewayAuthorizedComponent},
             {path: 'unauthorized', component: GatewayUnauthorizedComponent},
             {path: '', redirectTo: 'authorized', pathMatch: 'full'}
         ]
@@ -20,7 +20,7 @@ const ROUTES: Routes = [
 
 @NgModule({
     imports: [CommonModule, HttpModule, RouterModule.forChild(ROUTES)],
-    declarations: [GatewaysComponent, GatewayListComponent, GatewayUnauthorizedComponent],
+    declarations: [GatewaysComponent, GatewayAuthorizedComponent, GatewayUnauthorizedComponent],
     providers: [GatewayControlService]
 })
 export class GatewayModule {
