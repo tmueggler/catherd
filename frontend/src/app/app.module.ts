@@ -8,6 +8,8 @@ import {RouterModule, Routes} from "@angular/router";
 import {GatewayModule} from "./gateway/gateway.module";
 import {DashboardComponent} from "./dashboard/dashboard.component";
 import {PageNotFoundComponent} from "./page-not-found.component";
+import {NotificationService, NotificationComponentRegistry} from "./notification.service";
+import {NotificationComponent} from "./notification.component";
 
 const ROUTES: Routes = [
     {path: 'dashboard', component: DashboardComponent},
@@ -22,11 +24,14 @@ const ROUTES: Routes = [
         RouterModule.forRoot(ROUTES)
     ],
     declarations: [
+        NotificationComponent,
         AppComponent,
         DashboardComponent,
         PageNotFoundComponent
     ],
     providers: [
+        NotificationComponentRegistry,
+        NotificationService,
         Configuration.AppCfg,
         AppStateManager,
         MessageBus
