@@ -8,7 +8,7 @@ export class GatewayRepo {
     }
 
     all(): Gateway.Info[] {
-        return null;
+        return [];
     }
 
     update(data: Gateway.Info) {
