@@ -1,0 +1,16 @@
+<table class="table table-hover">
+    <tr>
+        <th>_state_</th>
+        <th>_uuid_</th>
+        <th>_actions_</th>
+    </tr>
+    <tr *ngFor="let gateway of gateways">
+        <td>{{gateway.state}}</td>
+        <td>{{gateway.uuid}}</td>
+        <td>
+            <button type="button" class="btn btn-default" (click)="authorize(gateway)">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+            </button>
+        </td>
+    </tr>
+</table>
