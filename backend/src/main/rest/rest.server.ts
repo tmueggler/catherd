@@ -4,6 +4,8 @@ import {RequestHandler, Request, Response, NextFunction, Router} from "express";
 import {GatewayService} from "../gateway/gateway.service";
 import {BeanName, Context} from "@catherd/inject/node";
 import {ServerBeans} from "../server.beans";
+import {GatewayRepo} from "../gateway/gateway.repo";
+import {LoggerFactory} from "@catherd/logcat/node";
 
 export interface RestServer {
     start(server: Server): void;
@@ -18,6 +20,8 @@ export function Create(name: BeanName, ctx: Context): RestServer {
     // TODO
     return new DefaultRestServer(app);
 }
+
+const LOGGER_NAME = 'rest-server';
 
 class DefaultRestServer implements RestServer {
     constructor(private readonly app: Express.Application) {
@@ -50,23 +54,32 @@ function Cors(req: Request, res: Response, next: NextFunction): void {
 
 function GatewayApi(ctx: Context): Router {
     let app = Express.Router();
-    app.get('/all', GatewayApi.GetAll(null, ctx));
+    app.get('/pending', GatewayApi.GetPending(null, ctx));
+    app.get('/authorized', GatewayApi.GetAuthorized(null, ctx));
     app.get('/:uuid', GatewayApi.GetByUuid(null, ctx));
     app.delete('/:uuid', GatewayApi.Delete(null, ctx));
     return app;
 }
 
 namespace GatewayApi {
-    export function GetAll(name: BeanName, ctx: Context): RequestHandler {
+    let log = LoggerFactory.get(LOGGER_NAME);
+
+    export function GetPending(name: BeanName, ctx: Context): RequestHandler {
+        let $gateways = ctx.get<GatewayRepo>(ServerBeans.GATEWAY_REPO);
+        return function (req: Request, res: Response, next: NextFunction): void {
+            res.send($gateways.all());
+        }
+    }
+
+    export function GetAuthorized(name: BeanName, ctx: Context): RequestHandler {
         let $gateway = ctx.get<GatewayService>(ServerBeans.GATEWAY_SERVICE);
         return function (req: Request, res: Response, next: NextFunction): void {
-            let uuid = req.params['uuid'];
             $gateway.all()
                 .then((result) => {
                     res.send(result);
                 })
                 .catch((err) => {
-                    console.log(`Problem retrieving all gateways. Reason ${err}`);
+                    log.debug(`Problem retrieving all gateways. Reason ${err}`);
                     res.sendStatus(500);
                 })
         }
