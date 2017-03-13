@@ -1,7 +1,6 @@
 import {Server} from "http";
 import * as Express from "express";
 import {RequestHandler, Request, Response, NextFunction, Router} from "express";
-import {GatewayService} from "../gateway/gateway.service";
 import {BeanName, Context} from "@catherd/inject/node";
 import {ServerBeans} from "../server.beans";
 import {GatewayRepo} from "../gateway/gateway.repo";
@@ -57,6 +56,7 @@ function GatewayApi(ctx: Context): Router {
     app.get('/unauthorized', GatewayApi.GetUnauthorized(null, ctx));
     app.get('/authorized', GatewayApi.GetAuthorized(null, ctx));
     app.get('/:uuid', GatewayApi.GetByUuid(null, ctx));
+    app.post('/authorize/:uuid', GatewayApi.Authorize(null, ctx));
     app.delete('/:uuid', GatewayApi.Delete(null, ctx));
     return app;
 }
@@ -67,47 +67,71 @@ namespace GatewayApi {
     export function GetUnauthorized(name: BeanName, ctx: Context): RequestHandler {
         let $gateways = ctx.get<GatewayRepo>(ServerBeans.GATEWAY_REPO);
         return function (req: Request, res: Response, next: NextFunction): void {
-            res.send($gateways.all());
+            $gateways.unauthorized()
+                .then((result) => {
+                    res.send(result);
+                })
+                .catch((error) => {
+                    log.debug(`Problem retrieving all gateways. Reason ${error}`);
+                    res.sendStatus(500);
+                });
         }
     }
 
     export function GetAuthorized(name: BeanName, ctx: Context): RequestHandler {
-        let $gateway = ctx.get<GatewayService>(ServerBeans.GATEWAY_SERVICE);
+        let $gateway = ctx.get<GatewayRepo>(ServerBeans.GATEWAY_REPO);
         return function (req: Request, res: Response, next: NextFunction): void {
-            $gateway.all()
+            $gateway.authorized()
                 .then((result) => {
                     res.send(result);
                 })
-                .catch((err) => {
-                    log.debug(`Problem retrieving all gateways. Reason ${err}`);
+                .catch((error) => {
+                    log.debug(`Problem retrieving all gateways. Reason ${error}`);
                     res.sendStatus(500);
                 })
         }
     }
 
     export function GetByUuid(name: BeanName, ctx: Context): RequestHandler {
-        let $gateway = ctx.get<GatewayService>(ServerBeans.GATEWAY_SERVICE);
+        let $gateway = ctx.get<GatewayRepo>(ServerBeans.GATEWAY_REPO);
         return function (req: Request, res: Response, next: NextFunction): void {
             let uuid = req.params['uuid'];
             $gateway.get(uuid)
                 .then((result) => {
                     res.send(result);
                 })
-                .catch((err) => {
+                .catch((error) => {
+                    log.debug(`Problem retreiving gateway ${uuid}. Reason ${error}`);
+                    res.sendStatus(500);
+                })
+        }
+    }
+
+    export function Authorize(name: BeanName, ctx: Context): RequestHandler {
+        let $gateway = ctx.get<GatewayRepo>(ServerBeans.GATEWAY_REPO);
+        return function (req: Request, res: Response, next: NextFunction): void {
+            let uuid = req.params['uuid'];
+            $gateway.authorize(uuid)
+                .then((result) => {
+                    res.sendStatus(200);
+                })
+                .catch((error) => {
+                    log.debug(`Problem authorizing gateway ${uuid}. Reason ${error}`);
                     res.sendStatus(500);
                 })
         }
     }
 
     export function Delete(name: BeanName, ctx: Context): RequestHandler {
-        let $gateway = ctx.get<GatewayService>(ServerBeans.GATEWAY_SERVICE);
+        let $gateway = ctx.get<GatewayRepo>(ServerBeans.GATEWAY_REPO);
         return function (req: Request, res: Response, next: NextFunction): void {
             let uuid = req.params['uuid'];
             $gateway.delete(uuid)
                 .then((result) => {
                     res.sendStatus(200);
                 })
-                .catch((err) => {
+                .catch((error) => {
+                    log.debug(`Problem deleting gateway ${uuid}. Reason ${error}`);
                     res.sendStatus(500);
                 });
         }
