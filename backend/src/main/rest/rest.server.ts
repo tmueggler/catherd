@@ -54,7 +54,7 @@ function Cors(req: Request, res: Response, next: NextFunction): void {
 
 function GatewayApi(ctx: Context): Router {
     let app = Express.Router();
-    app.get('/pending', GatewayApi.GetPending(null, ctx));
+    app.get('/unauthorized', GatewayApi.GetUnauthorized(null, ctx));
     app.get('/authorized', GatewayApi.GetAuthorized(null, ctx));
     app.get('/:uuid', GatewayApi.GetByUuid(null, ctx));
     app.delete('/:uuid', GatewayApi.Delete(null, ctx));
@@ -64,7 +64,7 @@ function GatewayApi(ctx: Context): Router {
 namespace GatewayApi {
     let log = LoggerFactory.get(LOGGER_NAME);
 
-    export function GetPending(name: BeanName, ctx: Context): RequestHandler {
+    export function GetUnauthorized(name: BeanName, ctx: Context): RequestHandler {
         let $gateways = ctx.get<GatewayRepo>(ServerBeans.GATEWAY_REPO);
         return function (req: Request, res: Response, next: NextFunction): void {
             res.send($gateways.all());
