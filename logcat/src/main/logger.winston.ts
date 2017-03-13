@@ -5,8 +5,12 @@ export class WinstonLogger implements Logger {
     private delegate: winston.LoggerInstance;
 
     constructor(public readonly name: string) {
-        this.delegate = new winston.Logger();
-        this.delegate.level = 'debug';
+        this.delegate = new winston.Logger({
+            level: 'debug',
+            transports: [new winston.transports.Console()],
+            emitErrs: true
+
+        });
         this.delegate.on('error', (error: any) => console.warn(`Logger ${this.name} error ${error}`));
     }
 
