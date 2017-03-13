@@ -2,6 +2,9 @@ import {Connection} from "sockjs";
 import {MessageBus} from "./messagebus.service";
 import * as Mqtt from "mqtt";
 import {MessagingCfg} from "./messagebus.config";
+import {LoggerFactory} from "@catherd/logcat/node";
+
+let log = LoggerFactory.get('stomp-mqtt-relay');
 
 export class StompMqttRelay implements MessageBus.ConnectionHandler {
     private readonly connections: Map<string, Relay>;
@@ -18,7 +21,7 @@ export class StompMqttRelay implements MessageBus.ConnectionHandler {
                 relay = new Relay(con, mqtt);
                 this.connections.set(con.id, relay);
             } catch (error) {
-                console.warn(`Problem initializing relay. Reason ${error}`);
+                log.warn(`Problem initializing relay. Reason ${error}`);
                 con.close('4502', 'Bad Gateway');
             }
         }
@@ -40,50 +43,50 @@ class Relay {
     }
 
     private stompIn(data: string): void {
-        console.log(`Stomp message ${data}`);
+        log.debug(`Stomp message ${data}`);
         // TODO parse stomp message
         // TODO forward to mqtt
     }
 
     private stompError(error: any): void {
-        console.warn(`Stomp error ${error}`);
+        log.warn(`Stomp error ${error}`);
         // TODO
     }
 
     private stompClose(): void {
-        console.warn(`Stomp close`);
+        log.warn(`Stomp close`);
         // TODO
     }
 
     private mqttConnect(ack: Mqtt.Packet): void {
-        console.log(`Mqtt connect ${ack.messageId}`);
+        log.debug(`Mqtt connect ${ack.messageId}`);
     }
 
     private mqttReconnect(): void {
-        console.log(`Mqtt reconnect`);
+        log.debug(`Mqtt reconnect`);
     }
 
     private mqttIn(topic: string, message: string): void {
-        console.log(`Mqtt message ${message} -> ${topic}`);
+        log.debug(`Mqtt message ${message} -> ${topic}`);
         // TODO convert to stomp message
         // TODO forward stomp message
     }
 
     private mqttOffline() {
-        console.warn(`Mqtt offline`);
+        log.warn(`Mqtt offline`);
     }
 
     private mqttClose(error: Error): void {
         if (error) {
-            console.warn(`Mqtt connection closed with error ${error}`);
+            log.warn(`Mqtt connection closed with error ${error}`);
         } else {
-            console.warn(`Mqtt connection closed`);
+            log.warn(`Mqtt connection closed`);
         }
         // TODO
     }
 
     private mqttError(error: Error): void {
-        console.warn(`Mqtt error ${error.message}`);
+        log.warn(`Mqtt error ${error.message}`);
         // TODO
     }
 }

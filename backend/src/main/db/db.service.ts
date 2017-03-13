@@ -1,8 +1,10 @@
 import * as r from "rethinkdb";
 import * as t from "timers";
 import * as DBCFG from "./db.config";
+import {LoggerFactory} from "@catherd/logcat/node";
 
 export class DbService {
+    private readonly log = LoggerFactory.get('db-service');
     private _reconnect_ms = 1000;
     private _con: r.Connection;
 
@@ -43,12 +45,12 @@ export class DbService {
     private connect() {
         r.connect(this.opts)
             .then((con) => {
-                console.log(`Connected to db.`);
+                this.log.debug(`Connected to db.`);
                 con.use(DBCFG.DB_NAME);
                 this._con = con;
             })
             .catch((err) => {
-                console.warn(`Problem connecting to db. Reason ${err}`);
+                this.log.warn(`Problem connecting to db. Reason ${err}`);
                 this.reconnect(this._reconnect_ms);
             });
     }
@@ -66,7 +68,7 @@ export class DbService {
         }
         this._con.close((err) => {
             if (err !== null) {
-                console.warn(`Problem closing db connection. Reason ${err}`);
+                this.log.warn(`Problem closing db connection. Reason ${err}`);
             }
             this._con = null;
         });
