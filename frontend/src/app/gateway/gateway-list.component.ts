@@ -17,7 +17,7 @@ export class GatewayListComponent implements OnInit {
     gateways: Gateway[] = [];
 
     ngOnInit() {
-        this.http.get(`${this.url}/gateway/all`)
+        this.http.get(`${this.url}/gateway/authorized`)
             .subscribe((res: Response) => {
                 this.gateways = res.json();
             });
