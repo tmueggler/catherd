@@ -8,7 +8,11 @@ export class GatewayRepo {
     }
 
     all(): Gateway.Info[] {
-        return [];
+        let res: Gateway.Info[] = [];
+        for (let g of this.infos.values()) {
+            res.push(g);
+        }
+        return res;
     }
 
     update(data: Gateway.Info) {
