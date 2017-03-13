@@ -6,6 +6,7 @@ import {GatewayControlService} from "./gateway-control.service";
 import {RouterModule, Routes} from "@angular/router";
 import {GatewaysComponent} from "./gateways.component";
 import {GatewayUnauthorizedComponent} from "./gateway-unauthorized.component";
+import {GatewayRepo} from "./gateway.repo";
 
 const ROUTES: Routes = [
     {
@@ -21,7 +22,7 @@ const ROUTES: Routes = [
 @NgModule({
     imports: [CommonModule, HttpModule, RouterModule.forChild(ROUTES)],
     declarations: [GatewaysComponent, GatewayAuthorizedComponent, GatewayUnauthorizedComponent],
-    providers: [GatewayControlService]
+    providers: [GatewayRepo, GatewayControlService]
 })
 export class GatewayModule {
 }
