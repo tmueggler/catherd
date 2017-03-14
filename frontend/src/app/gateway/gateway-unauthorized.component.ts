@@ -14,9 +14,13 @@ export class GatewayUnauthorizedComponent implements OnInit {
     gateways: Gateway.Info[] = [];
 
     ngOnInit(): void {
+        this.load();
+    }
+
+    private load(): void {
         this.gatewayrepo.unauthorized()
             .subscribe(
-                (res) => this.gateways = res,
+                (result) => this.gateways = result,
                 (error) => console.warn(`Failed to load unauthorized gateways. Reason ${error}`) // TODO show in view
             );
     }
@@ -24,7 +28,10 @@ export class GatewayUnauthorizedComponent implements OnInit {
     authorize(trg: Gateway.Info) {
         this.gatewayrepo.authorize(trg)
             .subscribe(
-                (res) => this.notification.success('_gateway_authorize_success_'),
+                (result) => {
+                    this.load();
+                    this.notification.success('_gateway_authorize_success_');
+                },
                 (error) => this.notification.warning('_gateway_authorize_failed_')
             );
     }
