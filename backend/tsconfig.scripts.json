@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "outDir": "scripts",
+    "noEmitOnError": true
+  },
+  "include": [
+    "src/scripts/**/*",
+    "index.ts"
+  ]
+}

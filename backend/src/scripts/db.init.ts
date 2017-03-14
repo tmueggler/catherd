@@ -1,5 +1,5 @@
 import * as r from "rethinkdb";
-import * as DBCFG from "../../main/db/db.config";
+import * as DBCFG from "./db.config";
 
 function closeAndExit(con: r.Connection, exit = 0) {
     con.close()
@@ -14,7 +14,7 @@ function closeAndExit(con: r.Connection, exit = 0) {
 }
 
 function initTables(con: r.Connection, db: r.Db) {
-    db.tableCreate(DBCFG.TABLE_GATEWAY, {primary_key: DBCFG.TABLE_GATEWAY_PK}).run(con)
+    db.tableCreate(DBCFG.TABLE_GATEWAY).run(con)
         .then((res) => {
             console.info(`Created table ${DBCFG.TABLE_GATEWAY}`);
             closeAndExit(con);

@@ -1,5 +1,5 @@
 import * as r from "rethinkdb";
-import * as dbcfg from "../../main/db/db.config";
+import * as DBCFG from "./db.config";
 
 function closeAndExit(con: r.Connection, exit = 0) {
     con.close()
@@ -14,7 +14,7 @@ function closeAndExit(con: r.Connection, exit = 0) {
 }
 
 function dropDb(con: r.Connection) {
-    r.dbDrop(dbcfg.DB_NAME).run(con)
+    r.dbDrop(DBCFG.DB_NAME).run(con)
         .then(res => {
             closeAndExit(con);
         })
@@ -23,7 +23,7 @@ function dropDb(con: r.Connection) {
         });
 }
 
-r.connect({host: dbcfg.HOST, port: dbcfg.PORT})
+r.connect({host: DBCFG.HOST, port: DBCFG.PORT})
     .then(con => {
         dropDb(con);
     }).catch(err => {

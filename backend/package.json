@@ -6,8 +6,9 @@
     "build": "npm run compile",
     "prestart": "npm run compile",
     "start": "node test/node/server.js",
-    "db:init": "npm run compile && node test/scripts/db.init.js",
-    "db:clean": "npm run compile && node test/scripts/db.clean.js"
+    "compile:scripts": "tsc -p tsconfig.scripts.json",
+    "db:init": "npm run compile:scripts && node scripts/db.init.js",
+    "db:clean": "npm run compile:scripts && node scripts/db.clean.js"
   },
   "dependencies": {
     "express": "^4.14.1",
