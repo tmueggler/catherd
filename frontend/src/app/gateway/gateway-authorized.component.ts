@@ -1,17 +1,19 @@
-import {Component, OnInit} from "@angular/core";
+import {Component, OnInit, OnDestroy} from "@angular/core";
 import {GatewayControlService} from "./gateway-control.service";
-import {Gateway} from "@catherd/api/web";
+import {Gateway, Message} from "@catherd/api/web";
 import {GatewayRepo} from "./gateway.repo";
 import {NotificationService} from "../notification.service";
+import {MessageBus, Topic, OnMessage, Subscription} from "../messagebus/messagebus.service";
 
 @Component({
     selector: 'gateway-list',
     templateUrl: 'app/gateway/gateway-authorized.component.html',
 })
-export class GatewayAuthorizedComponent implements OnInit {
+export class GatewayAuthorizedComponent implements OnInit, OnDestroy {
     private readonly url: string;
 
-    constructor(private readonly gatewayrepo: GatewayRepo,
+    constructor(private readonly messaging: MessageBus,
+                private readonly gatewayrepo: GatewayRepo,
                 private readonly control: GatewayControlService,
                 private readonly notification: NotificationService) {
         this.url = 'http://localhost:3000';
@@ -19,8 +21,19 @@ export class GatewayAuthorizedComponent implements OnInit {
 
     gateways: Gateway.Info[] = [];
 
+    private subscription: Subscription;
+
     ngOnInit() {
+        this.subscription = this.messaging.subscribe('/gateway/#', (topic, msg) => this.message(topic, msg));
         this.load();
+    }
+
+    ngOnDestroy() {
+        if (this.subscription) this.subscription.unsubscribe();
+    }
+
+    private message(topic: Topic, msg: Message): void {
+        console.log(`message ${topic} -> ${msg}`);
     }
 
     private load(): void {

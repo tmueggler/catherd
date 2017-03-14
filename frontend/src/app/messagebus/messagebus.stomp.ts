@@ -1,13 +1,16 @@
-import {Connection, Topic} from "./messagebus.service";
+import {Connection, Topic, OnMessage, Subscription} from "./messagebus.service";
 import * as SockJS from "sockjs-client";
 import {Message} from "@catherd/api/web";
 import Stomp = require("stompjs");
 
 export class StompConnection implements Connection {
+    constructor(private readonly url: string) {
+    }
+
     private client: Stomp.Client;
 
-    connect(url: string): void {
-        let sock: WebSocket = <any>SockJS(url);
+    connect(): void {
+        let sock: WebSocket = <any>SockJS(this.url);
         this.client = Stomp.over(sock);
         this.client.connect('', '',
             (frame) => {
@@ -25,11 +28,14 @@ export class StompConnection implements Connection {
         this.client.send(topic, {}, JSON.stringify(message));
     }
 
-    subscribe(topic: Topic, callback: (msg: Message) => void) {
-        if (!this.client) {
-            throw new Error('Not connected');
-        }
-        this.client.subscribe(topic, (msg) => callback(JSON.parse(msg.body)));
+    subscribe(topic: Topic, callback: OnMessage): Subscription {
+        if (!this.client) throw new Error('Not connected');
+        return this.client.subscribe(topic, (msg) => callback(topic, JSON.parse(msg.body)));
+    }
+
+    unsubscribe(sub: any): void {
+        if (!this.client)throw new Error('Not connected');
+        sub.unsubscribe();
     }
 
     close(): void {

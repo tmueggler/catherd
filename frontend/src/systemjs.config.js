@@ -15,6 +15,7 @@
             'rxjs': 'npm:rxjs',
             'sockjs-client': 'npm:sockjs-client/dist/sockjs.js',
             'stompjs': 'npm:stompjs/lib/stomp.js',
+            'mqtt': 'npm:mqtt/dist/mqtt.js',
             '@catherd/api/web': 'npm:@catherd/api/web/api.umd.js'
         },
         packages: {
