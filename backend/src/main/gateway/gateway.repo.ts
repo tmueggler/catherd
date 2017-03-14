@@ -108,6 +108,7 @@ export class GatewayRepo {
                 shadow.authorized.value = true;
                 if (!shadow._persisted) {
                     let pers: GatewayPersisted = {
+                        id: shadow.uuid.value,
                         uuid: shadow.uuid,
                         version: shadow.version,
                         authorized: shadow.authorized
