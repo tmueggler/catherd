@@ -1,8 +1,8 @@
 import {Component, OnInit} from "@angular/core";
-import {Http, Response} from "@angular/http";
 import {GatewayControlService} from "./gateway-control.service";
 import {Gateway} from "@catherd/api/web";
 import {GatewayRepo} from "./gateway.repo";
+import {NotificationService} from "../notification.service";
 
 @Component({
     selector: 'gateway-list',
@@ -11,22 +11,35 @@ import {GatewayRepo} from "./gateway.repo";
 export class GatewayAuthorizedComponent implements OnInit {
     private readonly url: string;
 
-    constructor(private readonly gatewayrepo: GatewayRepo, private readonly control: GatewayControlService) {
+    constructor(private readonly gatewayrepo: GatewayRepo,
+                private readonly control: GatewayControlService,
+                private readonly notification: NotificationService) {
         this.url = 'http://localhost:3000';
     }
 
     gateways: Gateway.Info[] = [];
 
     ngOnInit() {
+        this.load();
+    }
+
+    private load(): void {
         this.gatewayrepo.authorized()
-            .subscribe((res) => this.gateways = res);
+            .subscribe(
+                (result) => this.gateways = result,
+                (error) => console.warn(`Failed to load authorized gateways. Reason ${error}`)
+            );
     }
 
     delete(trg: Gateway.Info) {
         this.gatewayrepo.delete(trg)
-            .subscribe((res) => {
-                // TODO show success
-            });
+            .subscribe(
+                (result) => {
+                    this.load();
+                    this.notification.success('_gatway_delete_success_');
+                },
+                (error) => this.notification.danger('_gatway_delete_failed_')
+            );
     }
 
     restart(trg: Gateway.Info) {
