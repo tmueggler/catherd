@@ -7,6 +7,8 @@ import {Context, DefaultBeanFactory, BeanName, DefaultContext} from "@catherd/in
 import {EventBusBeanPostProcessor} from "./eventbus/eventbus.beanpostprocessor";
 import {AppLifecycleBeanPostProcessor} from "./app/applifecycle.beanpostprocessor";
 import {AppBeans} from "./app/app.beans";
+import {MessageHandlerBeanPostProcessor} from "./messagebus/messagehandler.beanpostprocessor";
+import {ControlMessageProcessor} from "./control/control.messageprocessor";
 
 let $$factories = new DefaultBeanFactory();
 
@@ -43,7 +45,7 @@ $$factories.define({
 });
 
 $$factories.define({
-    name: 'registration-service-controller',
+    name: 'state-controller',
     create: (name: BeanName, ctx: Context) => {
         return new StateController(
             ctx.get<GatewayConfig>(AppBeans.APP_CONFIG),
@@ -52,10 +54,18 @@ $$factories.define({
     }
 });
 
+$$factories.define({
+    name: 'control-message-processor',
+    create: (name: BeanName, ctx: Context) => {
+        return new ControlMessageProcessor();
+    }
+});
+
 DefaultContext.initialize(
     $$factories,
     [
         new EventBusBeanPostProcessor(),
+        new MessageHandlerBeanPostProcessor(),
         new AppLifecycleBeanPostProcessor()
     ]
 );
