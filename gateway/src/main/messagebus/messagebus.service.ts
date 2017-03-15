@@ -4,12 +4,48 @@ import {MessageBusEvent} from "./messagebus.event";
 import {SockJSConnection} from "./messagebus.sockjs.connection";
 import {MqttConnection} from "./messagebus.mqtt.connection";
 
+export interface MessageBusConnection {
+    reconnect_ms: number;
+    readonly connected: boolean;
+    connect(): void;
+    subscribe(topic: string): Subscription;
+    send(topic: string, msg: Message): void;
+    disconnect(): void;
+    onconnected: (src: MessageBusConnection) => void;
+    onmessage: (src: MessageBusConnection, topic: string, msg: Message) => void;
+    ondisconnected: (src: MessageBusConnection) => void;
+    onerror: (src: MessageBusConnection, error: any) => void;
+}
+
+export interface MessageReceiver {
+    subscribe(topic: Topic, callback: OnMessage): Subscription;
+}
+
+export interface OnMessage {
+    on(topic: Topic, msg: Message): void;
+}
+
+export type Topic = string;
+
+export interface MessageTransmitter {
+    send(topic: Topic, msg: Message): void;
+}
+
+export interface Subscription {
+    unsubscribe(): void;
+}
+
+export interface MessageBus extends MessageReceiver, MessageTransmitter {
+    start(): void;
+    stop(): void;
+}
+
 namespace ConnectionType {
     export const SOCKJS: number = 1;
     export const MQTT: number = 2;
 }
 
-export class MessageBus {
+export class DefaultMessageBus implements MessageBus {
     private readonly connection: MessageBusConnection;
     private reconnect_ms = 5000;
 
@@ -71,21 +107,4 @@ export class MessageBus {
             this.onmessage(topic, msg);
         }
     }
-}
-
-export interface MessageBusConnection {
-    reconnect_ms: number;
-    readonly connected: boolean;
-    connect(): void;
-    subscribe(topic: string): Subscription;
-    send(topic: string, msg: Message): void;
-    disconnect(): void;
-    onconnected: (src: MessageBusConnection) => void;
-    onmessage: (src: MessageBusConnection, topic: string, msg: Message) => void;
-    ondisconnected: (src: MessageBusConnection) => void;
-    onerror: (src: MessageBusConnection, error: any) => void;
-}
-
-export interface Subscription {
-    unsubscribe(): void;
 }

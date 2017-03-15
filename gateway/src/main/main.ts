@@ -1,5 +1,5 @@
 import {EventBus} from "./eventbus/eventbus.service";
-import {MessageBus} from "./messagebus/messagebus.service";
+import {MessageBus, DefaultMessageBus} from "./messagebus/messagebus.service";
 import {GatewayConfig, GatewayConfigProvider} from "./gateway.config";
 import {StateController} from "./state/state.controller";
 import {MessageBusController} from "./messagebus/messagebus.controller";
@@ -26,7 +26,7 @@ $$factories.define({
 $$factories.define({
     name: AppBeans.MESSAGE_BUS,
     create: (name: BeanName, ctx: Context) => {
-        return new MessageBus(
+        return new DefaultMessageBus(
             ctx.get<GatewayConfig>(AppBeans.APP_CONFIG).backendUrl,
             ctx.get<EventBus>(AppBeans.EVENT_BUS)
         );
