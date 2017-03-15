@@ -1,9 +1,9 @@
 import {Component, OnInit, OnDestroy} from "@angular/core";
 import {GatewayControlService} from "./gateway-control.service";
-import {Gateway, Message} from "@catherd/api/web";
+import {Gateway, Message, StateChange} from "@catherd/api/web";
 import {GatewayRepo} from "./gateway.repo";
 import {NotificationService} from "../notification.service";
-import {MessageBus, Topic, OnMessage, Subscription} from "../messagebus/messagebus.service";
+import {MessageBus, Topic, Subscription} from "../messagebus/messagebus.service";
 
 @Component({
     selector: 'gateway-list',
@@ -34,6 +34,19 @@ export class GatewayAuthorizedComponent implements OnInit, OnDestroy {
 
     private message(topic: Topic, msg: Message): void {
         console.log(`message ${topic} -> ${msg}`);
+        if (msg.type == StateChange.TYPE) {
+            let parts = topic.split('/');
+            let trgtype = parts[1];
+            let trguuid = parts[2];
+            let trgprop = parts[3];
+            if (trgtype === 'gateway' && trgprop === 'info') {
+                let change = msg as StateChange<Gateway.Info>;
+                let idx = this.gateways.findIndex((e) => {
+                    return e.uuid === trguuid
+                });
+                if (idx > -1) this.gateways[idx] = change.after;
+            }
+        }
     }
 
     private load(): void {
