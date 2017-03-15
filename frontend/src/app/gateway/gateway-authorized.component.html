@@ -3,6 +3,7 @@
         <th></th>
         <th>_state_</th>
         <th>_uuid_</th>
+        <th>_version_</th>
         <th>_actions_</th>
     </tr>
     <tr *ngFor="let gateway of gateways">
@@ -13,6 +14,7 @@
         </td>
         <td>{{gateway.state}}</td>
         <td>{{gateway.uuid}}</td>
+        <td>{{gateway.version}}</td>
         <td>
             <button type="button" class="btn btn-default" (click)="restart(gateway)">
                 <span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>
