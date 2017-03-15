@@ -1,6 +1,6 @@
 import * as SockJS from "sockjs-client";
 import * as t from "timers";
-import {MessageBusConnection} from "./messagebus.service";
+import {MessageBusConnection, Subscription} from "./messagebus.service";
 import {Message} from "@catherd/api/node";
 import {LoggerFactory} from "@catherd/logcat/node";
 import EventEmitter = NodeJS.EventEmitter;
@@ -12,7 +12,7 @@ namespace WebSocket {
     export const CLOSED = 3;
 }
 
-export class SockJSConnection {
+export class SockJSConnection implements MessageBusConnection {
     private readonly log = LoggerFactory.get('sockjs-connection');
     reconnect_ms: number;
 
@@ -100,8 +100,8 @@ export class SockJSConnection {
         }
     }
 
-    subscribe(topic: string): void {
-        // TODO
+    subscribe(topic: string): Subscription {
+        return null;
     }
 
     send(topic: string, msg: Message): MessageBusConnection {
@@ -153,5 +153,10 @@ export class SockJSConnection {
         if (this.onerror) {
             this.onerror(this, error);
         }
+    }
+}
+
+class SockJSSubscription implements Subscription {
+    unsubscribe(): void {
     }
 }

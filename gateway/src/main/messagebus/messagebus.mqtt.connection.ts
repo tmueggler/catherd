@@ -1,4 +1,4 @@
-import {MessageBusConnection} from "./messagebus.service";
+import {MessageBusConnection, Subscription} from "./messagebus.service";
 import {Message} from "@catherd/api/node";
 import * as Mqtt from "mqtt";
 import {LoggerFactory} from "@catherd/logcat/node";
@@ -32,11 +32,12 @@ export class MqttConnection implements MessageBusConnection {
         this.client.on('reconnect', () => this.mqttReconnect());
     }
 
-    subscribe(topic: string): void {
+    subscribe(topic: string): Subscription {
         if (!this.client) {
             throw new Error(`Not connected`);
         }
         this.client.subscribe(topic);
+        return new MqttSubscription(this.client, topic);
     }
 
     send(topic: string, msg: Message): void {
@@ -116,5 +117,14 @@ export class MqttConnection implements MessageBusConnection {
         if (this.onerror) {
             this.onerror(this, error);
         }
+    }
+}
+
+class MqttSubscription implements Subscription {
+    constructor(private readonly client: Mqtt.Client, private readonly topic: string) {
+    }
+
+    unsubscribe(): void {
+        this.client.unsubscribe(this.topic);
     }
 }

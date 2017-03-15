@@ -50,17 +50,13 @@ export class MessageBus {
         }
     }
 
-    subscribe(topic: string): void {
-        if (!this.connection.connected) {
-            throw new Error(`Not connected`);
-        }
-        this.connection.subscribe(topic);
+    subscribe(topic: string): Subscription {
+        if (!this.connection.connected) throw new Error(`Not connected`);
+        return this.connection.subscribe(topic);
     }
 
     send(topic: string, msg: Message): void {
-        if (!this.connection.connected) {
-            throw new Error(`Not connected`);
-        }
+        if (!this.connection.connected) throw new Error(`Not connected`);
         this.connection.send(topic, msg);
     }
 
@@ -81,11 +77,15 @@ export interface MessageBusConnection {
     reconnect_ms: number;
     readonly connected: boolean;
     connect(): void;
-    subscribe(topic: string): void;
+    subscribe(topic: string): Subscription;
     send(topic: string, msg: Message): void;
     disconnect(): void;
     onconnected: (src: MessageBusConnection) => void;
     onmessage: (src: MessageBusConnection, topic: string, msg: Message) => void;
     ondisconnected: (src: MessageBusConnection) => void;
     onerror: (src: MessageBusConnection, error: any) => void;
+}
+
+export interface Subscription {
+    unsubscribe(): void;
 }
