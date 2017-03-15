@@ -33,7 +33,7 @@ const log = LoggerFactory.get('messagehandler-beanpostprocessor');
 
 export class MessageHandlerBeanPostProcessor implements BeanPostProcessor {
     private pending: MessageHandlerProxy[] = [];
-    private subscriptions: Subscription[];
+    private subscriptions: Subscription[] = [];
 
     process(name: BeanName, instance: any): any {
         let methods: Metadata.HandlerMethod[] = Reflect.getMetadata(Metadata.HANDLERMETHODS, instance.constructor.prototype);
