@@ -49,12 +49,14 @@ namespace ConnectionType {
 const log = LoggerFactory.get('default-messagebus');
 
 export class DefaultMessageBus implements MessageBus {
-    private readonly subscriptions: Subscriptions;
+    private readonly subscriptions: TopicSubscriptions;
+    private readonly handlers: Handlers;
     private readonly connection: MessageBusConnection;
     private reconnect_ms = 5000;
 
     constructor(private readonly url: string, private readonly events: EventBus) {
-        this.subscriptions = new Subscriptions();
+        this.subscriptions = new TopicSubscriptions();
+        this.handlers = new Handlers();
         let con: MessageBusConnection;
         switch (ConnectionType.MQTT) {
             case ConnectionType.SOCKJS:
@@ -75,12 +77,15 @@ export class DefaultMessageBus implements MessageBus {
 
     private connectionConnected(): void {
         log.debug(`Connected`);
+        this.subscriptions.forEach((topic: Topic) => {
+            return this.subscribeSafe(topic)
+        });
         this.events.send({type: MessageBusEvent.CONNECTED, src_id: null});
     }
 
     private connectionMessage(topic: string, msg: Message): void {
         log.debug(`Message: ${topic} -> ${msg}`);
-        this.subscriptions.on(topic, msg);
+        this.handlers.on(topic, msg);
     }
 
     private connectionDisconnected(): void {
@@ -95,14 +100,35 @@ export class DefaultMessageBus implements MessageBus {
     }
 
     subscribe(topic: string, callback: OnMessage): Subscription {
-        if (!this.connection.connected) throw new Error(`Not connected`);
-        this.subscriptions.add(topic, callback);
-        let sub = this.connection.subscribe(topic);
-        return new MessageBusSubscription(sub, () => this.unsubscribe(topic, callback));
+        if (!this.subscriptions.is(topic)) {
+            let underlying = this.subscribeSafe(topic);
+            this.subscriptions.add(topic, underlying);
+        }
+        this.handlers.add(topic, callback);
+        return new MessageBusSubscription(topic, callback, this);
     }
 
-    private unsubscribe(topic: Topic, callback: OnMessage): void {
-        this.subscriptions.remove(topic, callback);
+    private subscribeSafe(topic: Topic): Subscription {
+        let sub: Subscription = null;
+        try {
+            sub = this.connection.subscribe(topic);
+            log.debug(`Subscribed to ${topic}`);
+        } catch (e) {
+            log.debug(`Subscription to ${topic} failed. Reason ${e}`);
+        }
+        return sub;
+    }
+
+    unsubscribe(sub: MessageBusSubscription): void {
+        let remaining = this.handlers.remove(sub.topic, sub.handler);
+        if (remaining > 0) return;
+        let underlying = this.subscriptions.remove(sub.topic);
+        if (!underlying) return;
+        try {
+            underlying.unsubscribe();
+        } catch (e) {
+            log.warn(`Unsubscribe from ${sub.topic} failed. Reason ${e}`);
+        }
     }
 
     send(topic: string, msg: Message): void {
@@ -115,36 +141,71 @@ export class DefaultMessageBus implements MessageBus {
     }
 }
 
-class Subscriptions implements OnMessage { // TODO implement registration by actual topic
-    private messagehandlers: OnMessage[] = [];
-
-    add(topic: Topic, callback: OnMessage): void {
-        this.messagehandlers.push(callback);
+class MessageBusSubscription implements Subscription {
+    constructor(public readonly topic: Topic,
+                public readonly handler: OnMessage,
+                private readonly to: DefaultMessageBus) {
     }
 
-    remove(topic: Topic, callback: OnMessage): void {
-        let idx = this.messagehandlers.indexOf(callback);
-        if (idx > -1) this.messagehandlers.splice(idx, 1);
+    unsubscribe(): void {
+        this.to.unsubscribe(this);
+    }
+}
+
+class TopicSubscriptions {
+    private readonly subscriptions: Map<Topic, Subscription> = new Map();
+
+    is(topic: Topic): boolean {
+        return this.subscriptions.has(topic);
     }
 
-    on(topic: Topic, msg: Message): void {
-        for (let h of this.messagehandlers) {
-            try {
-                h.on(topic, msg);
-            } catch (e) {
-                log.warn(`Uncaught message handler exception ${e}`);
-            }
+    add(topic: Topic, sub: Subscription): void {
+        this.subscriptions.set(topic, sub);
+    }
+
+    remove(topic: Topic): Subscription {
+        let existing = this.subscriptions.get(topic);
+        this.subscriptions.delete(topic);
+        return existing;
+    }
+
+    forEach(callback: (t: Topic) => Subscription): void {
+        for (let topic of this.subscriptions.keys()) {
+            this.subscriptions.set(topic, callback(topic));
         }
     }
 }
 
-class MessageBusSubscription implements Subscription {
-    constructor(private readonly underlying: Subscription,
-                private readonly callback: () => void) {
+class Handlers implements OnMessage {
+    private readonly handlers: Map<Topic, Set<OnMessage>> = new Map();
+
+    add(topic: Topic, handler: OnMessage): void {
+        let active = this.handlers.get(topic);
+        if (!active) {
+            active = new Set();
+            this.handlers.set(topic, active);
+        }
+        active.add(handler);
     }
 
-    unsubscribe(): void {
-        this.underlying.unsubscribe();
-        this.callback();
+    remove(topic: Topic, handler: OnMessage): number {
+        let active = this.handlers.get(topic);
+        if (active) {
+            active.delete(handler);
+            if (active.size === 0) this.handlers.delete(topic);
+        }
+        return active ? active.size : 0;
+    }
+
+    on(topic: Topic, msg: Message): void {
+        let active = this.handlers.get(topic);
+        if (!active) return;
+        for (let h of active) {
+            try {
+                h.on(topic, msg);
+            } catch (e) {
+                log.warn(`Uncaught handler exception ${e}`);
+            }
+        }
     }
 }
