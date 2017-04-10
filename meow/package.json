@@ -1,0 +1,22 @@
+{
+  "name": "@catherd/meow",
+  "version": "0.0.0",
+  "scripts": {
+    "compile:build": "tsc -p src/build/tsconfig.json",
+    "build:script": "npm run compile:build && node build/build.js",
+    "clean:test": "npm run build:script clean:test",
+    "compile:test": "tsc -p src/test/tsconfig.json",
+    "jasmine": "jasmine JASMINE_CONFIG_PATH=jasmine.json",
+    "test": "npm run clean:test && npm run compile:test && npm run jasmine",
+    "clean": "npm run build:script clean:dist",
+    "compile": "tsc -p tsconfig.json",
+    "build": "npm run clean && npm run compile"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^2.0.0",
+    "@types/jasmine": "^2.5.46",
+    "fs-extra": "^2.1.2",
+    "jasmine": "^2.5.3",
+    "typescript": "^2.2.1"
+  }
+}
