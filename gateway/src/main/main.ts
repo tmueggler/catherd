@@ -9,6 +9,7 @@ import {AppLifecycleBeanPostProcessor} from "./app/applifecycle.beanpostprocesso
 import {AppBeans} from "./app/app.beans";
 import {MessageHandlerBeanPostProcessor} from "./messagebus/messagehandler.beanpostprocessor";
 import {ControlMessageProcessor} from "./control/control.messageprocessor";
+import {BackendMonitorService} from "./monitor/backend.monitor.service";
 
 let $$factories = new DefaultBeanFactory();
 
@@ -58,6 +59,16 @@ $$factories.define({
     name: 'control-message-processor',
     create: (name: BeanName, ctx: Context) => {
         return new ControlMessageProcessor();
+    }
+});
+
+$$factories.define({
+    name: 'backend-monitor-service',
+    create: (name: BeanName, ctx: Context) => {
+        return new BackendMonitorService(
+            ctx.get<GatewayConfig>(AppBeans.APP_CONFIG),
+            ctx.get<MessageBus>(AppBeans.MESSAGE_BUS)
+        );
     }
 });
 

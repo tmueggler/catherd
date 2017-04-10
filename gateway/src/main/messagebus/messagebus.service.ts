@@ -4,6 +4,7 @@ import {MessageBusEvent} from "./messagebus.event";
 import {SockJSConnection} from "./messagebus.sockjs.connection";
 import {MqttConnection} from "./messagebus.mqtt.connection";
 import {LoggerFactory} from "@catherd/logcat/node";
+import {RoutingTree} from "@catherd/meow/node";
 
 export interface MessageBusConnection {
     reconnect_ms: number;
@@ -177,35 +178,46 @@ class TopicSubscriptions {
 }
 
 class Handlers implements OnMessage {
-    private readonly handlers: Map<Topic, Set<OnMessage>> = new Map();
+    private readonly routing: RoutingTree<OnMessage> = new RoutingTree();
+    private readonly count: Map<Topic, number> = new Map();
 
     add(topic: Topic, handler: OnMessage): void {
-        let active = this.handlers.get(topic);
-        if (!active) {
-            active = new Set();
-            this.handlers.set(topic, active);
-        }
-        active.add(handler);
+        this.routing.add(topic, handler);
+        this.inc(topic);
+    }
+
+    private inc(topic: Topic): number {
+        let cnt = this.count.get(topic);
+        if (!cnt) cnt = 0;
+        cnt += 1;
+        this.count.set(topic, cnt);
+        return cnt;
     }
 
     remove(topic: Topic, handler: OnMessage): number {
-        let active = this.handlers.get(topic);
-        if (active) {
-            active.delete(handler);
-            if (active.size === 0) this.handlers.delete(topic);
+        this.routing.remove(topic, handler);
+        return this.dec(topic);
+    }
+
+    private dec(topic: Topic): number {
+        let cnt = this.count.get(topic);
+        if (!cnt) return 0;
+        cnt -= 1;
+        if (cnt > 0) {
+            this.count.set(topic, cnt);
+        } else {
+            this.count.delete(topic);
         }
-        return active ? active.size : 0;
+        return cnt;
     }
 
     on(topic: Topic, msg: Message): void {
-        let active = this.handlers.get(topic);
-        if (!active) return;
-        for (let h of active) {
+        this.routing.forEach(topic, (handler) => {
             try {
-                h.on(topic, msg);
+                handler.on(topic, msg);
             } catch (e) {
                 log.warn(`Uncaught handler exception ${e}`);
             }
-        }
+        });
     }
 }
