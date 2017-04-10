@@ -64,12 +64,14 @@ export class RoutingTree<V> {
             if (part === HASH) throw `Wildcard ${HASH} not allowed`;
         });
         this._forEach(parts, 0, callback);
+        this.hash.forEach((val) => {
+            callback(val);
+        });
     }
 
     private _forEach(topic: string[], idx: number, callback: (val: V) => void): void {
         if (idx > topic.length - 1) return;
         let part = topic[idx];
-        // First most specific handlers
         let node = this.nodes.get(part);
         if (node) {
             if (idx === topic.length - 1) {
@@ -79,15 +81,17 @@ export class RoutingTree<V> {
             } else {
                 node._forEach(topic, idx + 1, callback);
             }
+            node.hash.forEach((val) => {
+                callback(val);
+            });
         }
-        // Then less specific
         let plus = this.nodes.get(PLUS);
         if (plus) {
             plus._forEach(topic, idx + 1, callback);
         }
-        // Then least specific
-        this.hash.forEach((val) => {
-            callback(val);
-        });
+    }
+
+    toString(): string {
+        return `RoutingTree{name=${this.name},nodes=${this.nodes.size},hash=${this.hash.length}}`;
     }
 }

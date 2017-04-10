@@ -73,24 +73,24 @@ describe("When adding a value with wildcard '#", () => {
         sut.add('a/#', val);
     });
 
-    it('', () => {
+    it('should be returned for any sub path', () => {
         sut.forEach('a/b', spy);
         expect(spy).toHaveBeenCalledWith(val);
     });
 
-    it('', () => {
+    it('should be returned for any sub path', () => {
         sut.forEach('a/b/c', spy);
         expect(spy).toHaveBeenCalledWith(val);
     });
 
-    it('', () => {
+    it('should be returned for any sub path', () => {
         sut.forEach('a/b/c/d', spy);
         expect(spy).toHaveBeenCalledWith(val);
     });
 });
 
-describe('', () => {
-    it('', () => {
+describe('When adding multiple values', () => {
+    it('all values should be returned', () => {
         let spy = jasmine.createSpy('visit');
         let topic = 'a/b/c';
         let values = [{}, {}];
@@ -105,7 +105,7 @@ describe('', () => {
         expect(spy).toHaveBeenCalledWith(values[1]);
     });
 
-    it('', () => {
+    it("all values added with wildcard '#'", () => {
         let spy = jasmine.createSpy('visit');
         let values = [{}, {}, {}];
 
@@ -119,5 +119,18 @@ describe('', () => {
         expect(spy).toHaveBeenCalledWith(values[0]);
         expect(spy).toHaveBeenCalledWith(values[1]);
         expect(spy).toHaveBeenCalledWith(values[2]);
+    });
+});
+
+describe('When adding for absolute topic', () => {
+    it('', () => {
+        let spy = jasmine.createSpy('visit');
+        let val = {};
+        let sut = new RoutingTree();
+        sut.add('/a/+/b/#', val);
+
+        sut.forEach('/a/_any_/b', spy);
+
+        expect(spy).toHaveBeenCalledWith(val);
     });
 });
