@@ -88,3 +88,36 @@ describe("When adding a value with wildcard '#", () => {
         expect(spy).toHaveBeenCalledWith(val);
     });
 });
+
+describe('', () => {
+    it('', () => {
+        let spy = jasmine.createSpy('visit');
+        let topic = 'a/b/c';
+        let values = [{}, {}];
+
+        let sut = new RoutingTree();
+        sut.add(topic, values[0]);
+        sut.add(topic, values[1]);
+        sut.forEach(topic, spy);
+
+        expect(spy).toHaveBeenCalledTimes(2);
+        expect(spy).toHaveBeenCalledWith(values[0]);
+        expect(spy).toHaveBeenCalledWith(values[1]);
+    });
+
+    it('', () => {
+        let spy = jasmine.createSpy('visit');
+        let values = [{}, {}, {}];
+
+        let sut = new RoutingTree();
+        sut.add('#', values[0]);
+        sut.add('a/#', values[1]);
+        sut.add('a/b/#', values[2]);
+        sut.forEach('a/b/c', spy);
+
+        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledWith(values[0]);
+        expect(spy).toHaveBeenCalledWith(values[1]);
+        expect(spy).toHaveBeenCalledWith(values[2]);
+    });
+});

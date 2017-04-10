@@ -5,18 +5,13 @@ const HASH = '#';
 export class RoutingTree<V> {
     private readonly nodes: Map<string, RoutingTree<V>> = new Map();
     private readonly hash: V[] = [];
+    private readonly values: V[] = [];
 
     constructor(private readonly name?: string) {
     }
 
-    private _value: V;
-
-    get value(): V {
-        return this._value;
-    }
-
     add(topic: string, val: V): void {
-        // TODO validate if '#' must be last
+        // TODO validate '#' must be last
         this._add(topic.split(SEP), 0, val);
     }
 
@@ -32,7 +27,7 @@ export class RoutingTree<V> {
                 this.nodes.set(part, node);
             }
             if (idx === topic.length - 1) {
-                node._value = val;
+                node.values.push(val);
             } else {
                 node._add(topic, idx + 1, val);
             }
@@ -52,7 +47,12 @@ export class RoutingTree<V> {
         } else {
             let node = this.nodes.get(part);
             if (!node) return;
-            node._remove(topic, idx + 1, val);
+            if (idx === topic.length - 1) {
+                let idx = this.values.indexOf(val);
+                if (idx > -1) this.values.splice(idx, 1);
+            } else {
+                node._remove(topic, idx + 1, val);
+            }
         }
     }
 
@@ -73,8 +73,9 @@ export class RoutingTree<V> {
         let node = this.nodes.get(part);
         if (node) {
             if (idx === topic.length - 1) {
-                let value = node._value;
-                if (value) callback(value);
+                node.values.forEach((val) => {
+                    callback(val);
+                });
             } else {
                 node._forEach(topic, idx + 1, callback);
             }
