@@ -62,6 +62,7 @@ export class MqttConnection implements MessageBusConnection {
     }
 
     private mqttMessage(topic: string, payload: string, pkt: Mqtt.Packet): void {
+        this.log.debug(`Mqtt message ${payload}`);
         let msg = JSON.parse(payload)
         this.fireMessage(topic, msg);
     }
