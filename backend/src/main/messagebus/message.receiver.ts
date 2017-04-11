@@ -3,11 +3,7 @@ import {LoggerFactory} from "@catherd/logcat/node";
 import * as Mqtt from "mqtt";
 import * as Uuid from "uuid";
 import {MessagingCfg} from "./messagebus.config";
-import {BeanName, Context} from "@catherd/inject/node";
-import {AuthMessageProcessor} from "../auth/auth.messageprocessor";
-import {GatewayMessageProcessor} from "../gateway/gateway.messageprocessor";
-import {GatewayRepo} from "../gateway/gateway.repo";
-import {ServerBeans} from "../server.beans";
+import {RoutingTree} from "@catherd/meow/node";
 import ReceiverCfg = MessagingCfg.ReceiverCfg;
 
 export type SubscriptionId = string;
@@ -33,16 +29,9 @@ export interface MessageProcessor<M> {
     process(topic: Topic, msg: Message): void;
 }
 
-export function Create(name: BeanName, ctx: Context): MessageReceiver & MessageTransmitter {
-    let b = new DefaultMessageTransceiver(MessagingCfg.RECEIVER);
-    b.subscribe('/auth/+/+/#', new AuthMessageProcessor(b));
-    b.subscribe('/gateway/+/#', new GatewayMessageProcessor(b, ctx.get<GatewayRepo>(ServerBeans.GATEWAY_REPO)));
-    return b;
-}
-
 const LOGGER_NAME = 'message-receiver';
 
-class DefaultMessageTransceiver implements MessageReceiver, MessageTransmitter {
+export class DefaultMessageTransceiver implements MessageReceiver, MessageTransmitter {
     private readonly log = LoggerFactory.get(LOGGER_NAME);
     private readonly subscriptions: Subscriptions;
     private readonly processors: Processors;
@@ -218,22 +207,22 @@ class Subscriptions {
 // TODO maintain topic tree
 class Processors {
     private readonly log = LoggerFactory.get(LOGGER_NAME);
-    private processors: Set<MessageProcessor<any>>;
+    private processors: RoutingTree<MessageProcessor<any>>;
 
     constructor() {
-        this.processors = new Set();
+        this.processors = new RoutingTree();
     }
 
     add(topic: Topic, processor: MessageProcessor<any>): void {
-        this.processors.add(processor);
+        this.processors.add(topic, processor);
     }
 
     remove(topic: Topic, processor: MessageProcessor<any>): void {
-        this.processors.delete(processor);
+        this.processors.remove(topic, processor);
     }
 
     process(topic: Topic, msg: Message): void {
-        this.processors.forEach((p) => {
+        this.processors.forEach(topic, (p) => {
             try {
                 p.process(topic, msg)
             } catch (error) {

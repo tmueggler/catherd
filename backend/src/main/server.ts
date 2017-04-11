@@ -5,13 +5,15 @@ import {DbService} from "./db/db.service";
 import {RegistrationService} from "./registration/registration.service";
 import * as dbcfg from "./db/db.config";
 import {MessageBus} from "./messagebus/messagebus.service";
-import {Create as CreateMessageTransceiver, MessageReceiver} from "./messagebus/message.receiver";
+import {DefaultMessageTransceiver, MessageReceiver} from "./messagebus/message.receiver";
 import {MessagingCfg} from "./messagebus/messagebus.config";
 import {Create as CreateRestServer, RestServer} from "./rest/rest.server";
 import {DefaultBeanFactory, DefaultContext} from "@catherd/inject/node";
 import {ServerBeans} from "./server.beans";
 import {GatewayRepo} from "./gateway/gateway.repo";
 import {GatewayPersistedRepo} from "./gateway/gateway.persisted.repo";
+import {AuthMessageProcessor} from "./auth/auth.messageprocessor";
+import {GatewayMessageProcessor} from "./gateway/gateway.messageprocessor";
 
 let $$factores = new DefaultBeanFactory();
 
@@ -65,7 +67,10 @@ $$factores.define({
 $$factores.define({
     name: ServerBeans.MESSAGE_TRANSCEIVER,
     create: (name, ctx) => {
-        return CreateMessageTransceiver(name, ctx);
+        let b = new DefaultMessageTransceiver(MessagingCfg.RECEIVER);
+        b.subscribe('/auth/+/+/#', new AuthMessageProcessor(b));
+        b.subscribe('/gateway/+/#', new GatewayMessageProcessor(b, ctx.get<GatewayRepo>(ServerBeans.GATEWAY_REPO)));
+        return b;
     }
 });
 
