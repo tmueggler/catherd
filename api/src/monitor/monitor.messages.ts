@@ -5,7 +5,7 @@ export interface Ping extends Message {
 }
 
 export namespace Ping {
-    export const TYPE: MessageType = 21;
+    export const TYPE: MessageType = 31;
 }
 
 export interface Pong extends Message {
@@ -14,5 +14,5 @@ export interface Pong extends Message {
 }
 
 export namespace Pong {
-    export const TYPE: MessageType = 22;
+    export const TYPE: MessageType = 32;
 }
