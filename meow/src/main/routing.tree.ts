@@ -88,6 +88,9 @@ export class RoutingTree<V> {
         let plus = this.nodes.get(PLUS);
         if (plus) {
             plus._forEach(topic, idx + 1, callback);
+            plus.hash.forEach((val) => {
+                callback(val);
+            });
         }
     }
 

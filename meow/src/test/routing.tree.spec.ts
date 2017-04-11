@@ -133,4 +133,15 @@ describe('When adding for absolute topic', () => {
 
         expect(spy).toHaveBeenCalledWith(val);
     });
+
+    it('', () => {
+        let spy = jasmine.createSpy('visit');
+        let val = {};
+        let sut = new RoutingTree();
+        sut.add('/a/+/#', val);
+
+        sut.forEach('/a/_any_/_thing_', spy);
+
+        expect(spy).toHaveBeenCalledWith(val);
+    });
 });
